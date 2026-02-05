@@ -17,7 +17,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
             color: #fff;
         }
 
@@ -25,7 +25,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
             min-height: 100vh;
             padding: 10px;
         }
@@ -35,7 +34,7 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            max-width: 500px;
+            max-width: 400px;
             padding: 10px 20px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
@@ -64,7 +63,7 @@
             border-radius: 15px;
             padding: 15px 25px;
             margin-bottom: 10px;
-            max-width: 500px;
+            max-width: 400px;
             width: 100%;
             text-align: center;
         }
@@ -82,17 +81,17 @@
             color: #fff;
         }
 
-        #clue-hint {
-            font-size: 14px;
+        #tap-hint {
+            font-size: 12px;
             color: #aaa;
-            margin-top: 5px;
+            margin-top: 8px;
+            font-style: italic;
         }
 
         #game-area {
             position: relative;
             width: 100%;
-            max-width: 500px;
-            height: 400px;
+            max-width: 400px;
             background: rgba(0, 0, 0, 0.3);
             border-radius: 20px;
             border: 3px solid rgba(78, 204, 163, 0.3);
@@ -100,124 +99,169 @@
             margin-bottom: 10px;
         }
 
-        .falling-letter {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(145deg, #e94560, #c73e54);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: bold;
-            color: #fff;
-            cursor: grab;
-            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
-            transition: transform 0.1s, box-shadow 0.1s;
-            z-index: 10;
-        }
-
-        .falling-letter:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(233, 69, 96, 0.6);
-        }
-
-        .falling-letter.dragging {
-            cursor: grabbing;
-            transform: scale(1.15);
-            box-shadow: 0 8px 25px rgba(233, 69, 96, 0.8);
-            z-index: 100;
-        }
-
-        .falling-letter.collected {
-            background: linear-gradient(145deg, #4ecca3, #3db892);
-            box-shadow: 0 4px 15px rgba(78, 204, 163, 0.4);
-        }
-
-        #word-builder {
+        #grid-container {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 500px;
+            padding: 10px;
+            gap: 5px;
         }
 
-        #letter-tray {
+        .letter-row {
             display: flex;
-            flex-wrap: wrap;
+            gap: 5px;
             justify-content: center;
-            gap: 8px;
-            min-height: 70px;
-            padding: 15px;
+        }
+
+        .letter-row.falling {
+            animation: pulse 0.5s ease-in-out infinite alternate;
+            cursor: pointer;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.02); }
+        }
+
+        .letter-cell {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(145deg, #2a2a4a, #1a1a3a);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #555;
+            transition: all 0.2s;
+        }
+
+        .letter-cell.filled {
+            background: linear-gradient(145deg, #4ecca3, #3db892);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(78, 204, 163, 0.3);
+        }
+
+        .letter-cell.falling {
+            background: linear-gradient(145deg, #e94560, #c73e54);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
+        }
+
+        .letter-cell.highlight {
+            background: linear-gradient(145deg, #667eea, #5a6fd6);
+            animation: highlightPulse 0.3s ease-in-out;
+        }
+
+        @keyframes highlightPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Word Finding Phase */
+        #word-phase {
+            display: none;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        #word-phase.active {
+            display: block;
+        }
+
+        #found-words-container {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
-            width: 100%;
+            padding: 15px;
+            margin-bottom: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        #found-words-label {
+            font-size: 14px;
+            color: #4ecca3;
+            text-transform: uppercase;
             margin-bottom: 10px;
         }
 
-        .tray-letter {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(145deg, #4ecca3, #3db892);
-            border-radius: 10px;
+        #found-words {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: bold;
-            color: #fff;
-            cursor: grab;
-            box-shadow: 0 4px 15px rgba(78, 204, 163, 0.4);
-            transition: all 0.2s;
-        }
-
-        .tray-letter:hover {
-            transform: scale(1.1);
-        }
-
-        .tray-letter.dragging {
-            opacity: 0.5;
-        }
-
-        #word-slots {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
             flex-wrap: wrap;
-            justify-content: center;
+            gap: 8px;
         }
 
-        .word-slot {
-            width: 50px;
-            height: 60px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 3px dashed rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
+        .word-chip {
+            padding: 8px 16px;
+            background: linear-gradient(145deg, #3a3a5a, #2a2a4a);
+            border-radius: 20px;
+            font-size: 14px;
             font-weight: bold;
             color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .word-chip:hover {
+            background: linear-gradient(145deg, #4a4a6a, #3a3a5a);
+            transform: scale(1.05);
+        }
+
+        .word-chip.selected {
+            background: linear-gradient(145deg, #4ecca3, #3db892);
+            color: #1a1a2e;
+        }
+
+        .word-chip.used {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        #answer-builder {
+            background: rgba(102, 126, 234, 0.2);
+            border: 2px solid #667eea;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
+            min-height: 60px;
+        }
+
+        #answer-label {
+            font-size: 12px;
+            color: #667eea;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        #answer-words {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 30px;
+        }
+
+        .answer-word {
+            padding: 8px 16px;
+            background: linear-gradient(145deg, #667eea, #5a6fd6);
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            cursor: pointer;
+            text-transform: uppercase;
             transition: all 0.2s;
         }
 
-        .word-slot.filled {
-            background: linear-gradient(145deg, #667eea, #5a6fd6);
-            border: 3px solid #667eea;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .word-slot.drag-over {
-            border-color: #4ecca3;
-            background: rgba(78, 204, 163, 0.2);
+        .answer-word:hover {
             transform: scale(1.05);
+            opacity: 0.8;
         }
 
         #buttons {
             display: flex;
             gap: 10px;
+            justify-content: center;
         }
 
         button {
@@ -298,9 +342,9 @@
         .screen p {
             font-size: 18px;
             color: #aaa;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             text-align: center;
-            max-width: 400px;
+            max-width: 350px;
             padding: 0 20px;
         }
 
@@ -309,6 +353,7 @@
             font-size: 20px;
             background: linear-gradient(145deg, #e94560, #c73e54);
             color: #fff;
+            margin-top: 10px;
         }
 
         .screen button:hover {
@@ -323,86 +368,12 @@
             margin: 20px 0;
         }
 
-        #level-complete-screen h2 {
-            color: #4ecca3;
-        }
-
-        #word-found {
-            font-size: 36px;
-            font-weight: bold;
-            color: #667eea;
-            margin: 10px 0;
-            text-transform: uppercase;
-        }
-
-        #level-score {
-            font-size: 24px;
-            color: #aaa;
-        }
-
-        /* Floating score animation */
-        .float-score {
-            position: fixed;
-            font-size: 24px;
-            font-weight: bold;
-            color: #4ecca3;
-            pointer-events: none;
-            animation: floatUp 1s ease-out forwards;
-            z-index: 1000;
-        }
-
-        @keyframes floatUp {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-50px) scale(1.5);
-            }
-        }
-
-        /* Word formed animation */
-        .word-bonus {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 32px;
-            font-weight: bold;
-            color: #667eea;
-            pointer-events: none;
-            animation: wordPop 1.5s ease-out forwards;
-            z-index: 1000;
-            text-shadow: 0 0 20px rgba(102, 126, 234, 0.8);
-        }
-
-        @keyframes wordPop {
-            0% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.5);
-            }
-            20% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1.2);
-            }
-            80% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(1);
-            }
-        }
-
-        /* Instructions */
         .instructions {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
             padding: 20px;
             margin: 20px;
-            max-width: 400px;
+            max-width: 350px;
         }
 
         .instructions h3 {
@@ -420,6 +391,7 @@
             padding-left: 25px;
             position: relative;
             color: #ccc;
+            font-size: 14px;
         }
 
         .instructions li::before {
@@ -429,20 +401,36 @@
             color: #e94560;
         }
 
+        /* Level complete */
+        #level-complete-screen .answer-reveal {
+            font-size: 24px;
+            color: #667eea;
+            margin: 10px 0;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        #level-score {
+            font-size: 20px;
+            color: #aaa;
+        }
+
+        /* Shuffle animation */
+        .shuffling .letter-cell {
+            animation: shuffle 0.15s ease-in-out;
+        }
+
+        @keyframes shuffle {
+            0%, 100% { transform: rotateY(0deg); }
+            50% { transform: rotateY(90deg); }
+        }
+
         /* Responsive */
-        @media (max-width: 520px) {
-            #game-area {
-                height: 350px;
-            }
-
-            .falling-letter, .tray-letter, .word-slot {
-                width: 40px;
-                height: 40px;
-                font-size: 22px;
-            }
-
-            .word-slot {
-                height: 50px;
+        @media (max-width: 420px) {
+            .letter-cell {
+                width: 42px;
+                height: 42px;
+                font-size: 20px;
             }
 
             #header {
@@ -452,6 +440,11 @@
             .stat-value {
                 font-size: 20px;
             }
+
+            .word-chip, .answer-word {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
@@ -459,14 +452,15 @@
     <!-- Start Screen -->
     <div id="start-screen" class="screen">
         <h1>Word Fall</h1>
-        <p>Tetris meets word puzzles! Catch falling letters and solve the clues.</p>
+        <p>Tetris meets word puzzles!</p>
         <div class="instructions">
             <h3>How to Play</h3>
             <ul>
-                <li>Drag falling letters to catch them</li>
-                <li>Build words from your collected letters</li>
-                <li>Score points for words 4+ letters</li>
-                <li>Solve the clue to beat each level!</li>
+                <li>Rows of letters fall from the top</li>
+                <li>Tap a falling row to shuffle its letters</li>
+                <li>Rows stack at the bottom</li>
+                <li>Once full, find words in the grid</li>
+                <li>Build a phrase to answer the clue!</li>
             </ul>
         </div>
         <button id="start-btn">Start Game</button>
@@ -475,8 +469,8 @@
     <!-- Level Complete Screen -->
     <div id="level-complete-screen" class="screen hidden">
         <h2>Level Complete!</h2>
-        <p>You solved the clue:</p>
-        <div id="word-found">WORD</div>
+        <p>Your answer:</p>
+        <div id="answer-reveal" class="answer-reveal">ANSWER</div>
         <div id="level-score">+500 points</div>
         <button id="next-level-btn">Next Level</button>
     </div>
@@ -484,7 +478,7 @@
     <!-- Game Over Screen -->
     <div id="game-over-screen" class="screen hidden">
         <h2>Game Over</h2>
-        <p>Great job! Here's your final score:</p>
+        <p>Great job! Final score:</p>
         <div id="final-score">0</div>
         <p id="levels-completed">Levels completed: 0</p>
         <button id="restart-btn">Play Again</button>
@@ -502,22 +496,32 @@
                 <div class="stat-value" id="score">0</div>
             </div>
             <div class="stat">
-                <div class="stat-label">Lives</div>
-                <div class="stat-value" id="lives">3</div>
+                <div class="stat-label">Rows</div>
+                <div class="stat-value" id="rows-left">6</div>
             </div>
         </div>
 
         <div id="clue-container">
-            <div id="clue-label">Solve the Clue</div>
+            <div id="clue-label">Build a phrase that answers:</div>
             <div id="clue-text">Loading...</div>
-            <div id="clue-hint">(5 letters)</div>
+            <div id="tap-hint">Tap falling rows to shuffle letters</div>
         </div>
 
-        <div id="game-area"></div>
+        <div id="game-area">
+            <div id="grid-container"></div>
+        </div>
 
-        <div id="word-builder">
-            <div id="letter-tray"></div>
-            <div id="word-slots"></div>
+        <div id="word-phase">
+            <div id="found-words-container">
+                <div id="found-words-label">Found Words (tap to add)</div>
+                <div id="found-words"></div>
+            </div>
+
+            <div id="answer-builder">
+                <div id="answer-label">Your Answer (tap words to remove)</div>
+                <div id="answer-words"></div>
+            </div>
+
             <div id="buttons">
                 <button id="clear-btn">Clear</button>
                 <button id="submit-btn" disabled>Submit</button>
@@ -527,11 +531,63 @@
 
     <script>
         // ============================================
-        // WORD FALL - Game Logic
+        // WORD FALL - Game Logic (Redesigned)
         // ============================================
 
-        // Word dictionary for validation (common English words 4+ letters)
+        // Comprehensive word list for validation
         const VALID_WORDS = new Set([
+            // 3-letter words
+            'the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'can', 'had',
+            'her', 'was', 'one', 'our', 'out', 'day', 'get', 'has', 'him', 'his',
+            'how', 'its', 'let', 'may', 'new', 'now', 'old', 'see', 'two', 'way',
+            'who', 'boy', 'did', 'own', 'say', 'she', 'too', 'use', 'dad', 'mom',
+            'run', 'eat', 'hot', 'sun', 'red', 'big', 'dog', 'cat', 'bat', 'rat',
+            'hat', 'sat', 'mat', 'pat', 'fat', 'man', 'pan', 'can', 'fan', 'ran',
+            'tan', 'van', 'bed', 'fed', 'led', 'wed', 'bet', 'get', 'jet', 'let',
+            'met', 'net', 'pet', 'set', 'wet', 'yet', 'bit', 'fit', 'hit', 'kit',
+            'lit', 'pit', 'sit', 'wit', 'bot', 'cot', 'dot', 'got', 'hot', 'jot',
+            'lot', 'not', 'pot', 'rot', 'tot', 'bug', 'dug', 'hug', 'jug', 'mug',
+            'pug', 'rug', 'tug', 'bud', 'cud', 'mud', 'bus', 'pus', 'cup', 'pup',
+            'sup', 'cut', 'gut', 'hut', 'jut', 'nut', 'put', 'rut', 'tut', 'ace',
+            'ice', 'age', 'ape', 'ate', 'awe', 'axe', 'aye', 'bye', 'dye', 'eye',
+            'rye', 'add', 'odd', 'egg', 'ill', 'all', 'amp', 'ant', 'any', 'apt',
+            'arc', 'are', 'ark', 'arm', 'art', 'ash', 'ask', 'bad', 'bag', 'ban',
+            'bar', 'bay', 'beg', 'ben', 'bid', 'bin', 'bio', 'bow', 'box', 'bra',
+            'bun', 'buy', 'cab', 'cam', 'cap', 'car', 'chi', 'cob', 'cod', 'cog',
+            'cop', 'cow', 'cry', 'cub', 'cue', 'cur', 'dam', 'den', 'dew', 'die',
+            'dig', 'dim', 'dip', 'doc', 'doe', 'dry', 'dub', 'due', 'duo', 'ear',
+            'eel', 'ego', 'elk', 'elm', 'emu', 'end', 'era', 'eve', 'fad', 'fax',
+            'fee', 'fen', 'few', 'fig', 'fin', 'fir', 'fix', 'flu', 'fly', 'foe',
+            'fog', 'fop', 'fox', 'fry', 'fun', 'fur', 'gab', 'gag', 'gal', 'gap',
+            'gas', 'gay', 'gel', 'gem', 'gig', 'gin', 'gnu', 'gob', 'god', 'gum',
+            'gun', 'gut', 'guy', 'gym', 'ham', 'hay', 'hem', 'hen', 'hew', 'hex',
+            'hid', 'hip', 'hob', 'hoe', 'hog', 'hop', 'hub', 'hue', 'hum', 'hun',
+            'ice', 'icy', 'imp', 'ink', 'inn', 'ion', 'ire', 'irk', 'ivy', 'jab',
+            'jag', 'jam', 'jar', 'jaw', 'jay', 'jet', 'jig', 'job', 'jog', 'joy',
+            'jug', 'keg', 'ken', 'key', 'kid', 'kin', 'kit', 'lab', 'lac', 'lad',
+            'lag', 'lap', 'law', 'lax', 'lay', 'lea', 'led', 'leg', 'lemon', 'lid',
+            'lie', 'lip', 'lit', 'log', 'lop', 'lot', 'low', 'lug', 'mad', 'map',
+            'mar', 'mat', 'maw', 'max', 'men', 'met', 'mid', 'mix', 'mob', 'mop',
+            'mow', 'mud', 'mug', 'nab', 'nag', 'nap', 'nay', 'net', 'new', 'nil',
+            'nip', 'nit', 'nob', 'nod', 'nor', 'not', 'now', 'nun', 'nut', 'oak',
+            'oar', 'oat', 'orb', 'ore', 'our', 'out', 'owe', 'owl', 'own', 'pad',
+            'pal', 'pan', 'pap', 'par', 'pat', 'paw', 'pay', 'pea', 'peg', 'pen',
+            'pep', 'per', 'pew', 'pie', 'pig', 'pin', 'pit', 'ply', 'pod', 'pop',
+            'pot', 'pow', 'pro', 'pry', 'pub', 'pug', 'pun', 'pup', 'pus', 'put',
+            'qua', 'rad', 'rag', 'ram', 'ran', 'rap', 'rat', 'raw', 'ray', 'red',
+            'ref', 'rep', 'rib', 'rid', 'rig', 'rim', 'rip', 'rob', 'rod', 'roe',
+            'rot', 'row', 'rub', 'rue', 'rug', 'rum', 'run', 'rut', 'rye', 'sac',
+            'sad', 'sag', 'sap', 'sat', 'saw', 'say', 'sea', 'set', 'sew', 'she',
+            'shy', 'sin', 'sip', 'sir', 'sis', 'sit', 'six', 'ski', 'sky', 'sly',
+            'sob', 'sod', 'son', 'sop', 'sow', 'soy', 'spa', 'spy', 'sty', 'sub',
+            'sue', 'sum', 'sun', 'sup', 'tab', 'tad', 'tag', 'tan', 'tap', 'tar',
+            'tax', 'tea', 'ten', 'the', 'thy', 'tic', 'tie', 'tin', 'tip', 'toe',
+            'tog', 'tom', 'ton', 'too', 'top', 'tot', 'tow', 'toy', 'try', 'tub',
+            'tug', 'tux', 'two', 'urn', 'use', 'van', 'vat', 'vet', 'via', 'vie',
+            'vim', 'vow', 'wad', 'wag', 'war', 'was', 'wax', 'way', 'web', 'wed',
+            'wee', 'wet', 'who', 'why', 'wig', 'win', 'wit', 'woe', 'wok', 'won',
+            'woo', 'wow', 'yak', 'yam', 'yap', 'yaw', 'yea', 'yes', 'yet', 'yew',
+            'yin', 'yip', 'you', 'zap', 'zed', 'zen', 'zig', 'zip', 'zit', 'zoo',
             // 4-letter words
             'able', 'also', 'area', 'army', 'away', 'baby', 'back', 'ball', 'bank', 'base',
             'bear', 'beat', 'been', 'bell', 'best', 'bill', 'bird', 'blue', 'boat', 'body',
@@ -541,494 +597,210 @@
             'each', 'east', 'easy', 'edge', 'else', 'even', 'ever', 'evil', 'eyes', 'face',
             'fact', 'fail', 'fair', 'fall', 'farm', 'fast', 'fear', 'feel', 'feet', 'fell',
             'felt', 'file', 'fill', 'film', 'find', 'fine', 'fire', 'firm', 'fish', 'five',
-            'flat', 'flew', 'flow', 'food', 'foot', 'form', 'fort', 'four', 'free', 'from',
-            'full', 'fund', 'game', 'gave', 'girl', 'give', 'glad', 'goal', 'goes', 'gold',
-            'gone', 'good', 'gray', 'grew', 'grow', 'hair', 'half', 'hall', 'hand', 'hang',
-            'hard', 'have', 'head', 'hear', 'heat', 'held', 'help', 'here', 'hero', 'hide',
-            'high', 'hill', 'hold', 'hole', 'home', 'hope', 'host', 'hour', 'huge', 'hung',
-            'hunt', 'hurt', 'idea', 'iron', 'item', 'jack', 'jail', 'jobs', 'john', 'join',
-            'jump', 'jury', 'just', 'keen', 'keep', 'kept', 'kick', 'kids', 'kill', 'kind',
-            'king', 'knee', 'knew', 'know', 'lack', 'lady', 'laid', 'lake', 'land', 'last',
-            'late', 'lead', 'left', 'less', 'life', 'lift', 'like', 'line', 'link', 'list',
-            'live', 'load', 'loan', 'lock', 'long', 'look', 'lord', 'lose', 'loss', 'lost',
-            'love', 'luck', 'made', 'mail', 'main', 'make', 'male', 'many', 'mark', 'mass',
-            'mean', 'meet', 'mike', 'mile', 'milk', 'mind', 'mine', 'miss', 'mode', 'moon',
-            'more', 'most', 'move', 'much', 'must', 'name', 'near', 'neck', 'need', 'news',
-            'next', 'nice', 'nine', 'none', 'nose', 'note', 'okay', 'once', 'ones', 'only',
-            'onto', 'open', 'oral', 'over', 'pace', 'pack', 'page', 'paid', 'pain', 'pair',
-            'park', 'part', 'pass', 'past', 'path', 'peak', 'pick', 'plan', 'play', 'plus',
-            'poem', 'poet', 'poll', 'pool', 'poor', 'pope', 'port', 'post', 'pull', 'push',
-            'race', 'rain', 'rank', 'rare', 'rate', 'read', 'real', 'rest', 'rice', 'rich',
-            'ride', 'ring', 'rise', 'risk', 'road', 'rock', 'role', 'roll', 'roof', 'room',
-            'root', 'rose', 'rule', 'runs', 'safe', 'said', 'sake', 'sale', 'salt', 'same',
-            'sand', 'save', 'seat', 'seek', 'seem', 'seen', 'self', 'sell', 'send', 'sent',
-            'ship', 'shop', 'shot', 'show', 'shut', 'sick', 'side', 'sign', 'site', 'size',
-            'skin', 'slip', 'slow', 'snow', 'soft', 'soil', 'sold', 'sole', 'some', 'song',
-            'soon', 'sort', 'soul', 'spot', 'star', 'stay', 'step', 'stop', 'such', 'suit',
-            'sure', 'take', 'talk', 'tall', 'tank', 'tape', 'task', 'team', 'tell', 'tend',
-            'term', 'test', 'text', 'than', 'that', 'them', 'then', 'they', 'thin', 'this',
-            'thus', 'till', 'time', 'tiny', 'told', 'tone', 'took', 'tool', 'tour', 'town',
-            'tree', 'trip', 'true', 'turn', 'type', 'unit', 'upon', 'used', 'user', 'vary',
-            'vast', 'very', 'view', 'vote', 'wage', 'wait', 'wake', 'walk', 'wall', 'want',
-            'warm', 'wash', 'wave', 'ways', 'weak', 'wear', 'week', 'well', 'went', 'were',
-            'west', 'what', 'when', 'wide', 'wife', 'wild', 'will', 'wind', 'wine', 'wing',
-            'wire', 'wise', 'wish', 'with', 'wood', 'word', 'wore', 'work', 'yard', 'year',
-            'yeah', 'your', 'zero', 'zone',
+            'flat', 'flow', 'food', 'foot', 'form', 'fort', 'four', 'free', 'from', 'full',
+            'fund', 'game', 'gave', 'girl', 'give', 'glad', 'goal', 'goes', 'gold', 'gone',
+            'good', 'gray', 'grew', 'grow', 'hair', 'half', 'hall', 'hand', 'hang', 'hard',
+            'have', 'head', 'hear', 'heat', 'held', 'help', 'here', 'hero', 'hide', 'high',
+            'hill', 'hold', 'hole', 'home', 'hope', 'host', 'hour', 'huge', 'hung', 'hunt',
+            'hurt', 'idea', 'iron', 'item', 'jack', 'jail', 'jobs', 'john', 'join', 'jump',
+            'jury', 'just', 'keen', 'keep', 'kept', 'kick', 'kids', 'kill', 'kind', 'king',
+            'knee', 'knew', 'know', 'lack', 'lady', 'laid', 'lake', 'land', 'last', 'late',
+            'lead', 'left', 'less', 'life', 'lift', 'like', 'line', 'link', 'list', 'live',
+            'load', 'loan', 'lock', 'long', 'look', 'lord', 'lose', 'loss', 'lost', 'love',
+            'luck', 'made', 'mail', 'main', 'make', 'male', 'many', 'mark', 'mass', 'mean',
+            'meet', 'mile', 'milk', 'mind', 'mine', 'miss', 'mode', 'moon', 'more', 'most',
+            'move', 'much', 'must', 'name', 'near', 'neck', 'need', 'news', 'next', 'nice',
+            'nine', 'none', 'nose', 'note', 'okay', 'once', 'ones', 'only', 'onto', 'open',
+            'oral', 'over', 'pace', 'pack', 'page', 'paid', 'pain', 'pair', 'park', 'part',
+            'pass', 'past', 'path', 'peak', 'pick', 'plan', 'play', 'plus', 'poem', 'poet',
+            'poll', 'pool', 'poor', 'port', 'post', 'pull', 'push', 'race', 'rain', 'rank',
+            'rare', 'rate', 'read', 'real', 'rest', 'rice', 'rich', 'ride', 'ring', 'rise',
+            'risk', 'road', 'rock', 'role', 'roll', 'roof', 'room', 'root', 'rose', 'rule',
+            'runs', 'safe', 'said', 'sake', 'sale', 'salt', 'same', 'sand', 'save', 'seat',
+            'seek', 'seem', 'seen', 'self', 'sell', 'send', 'sent', 'ship', 'shop', 'shot',
+            'show', 'shut', 'sick', 'side', 'sign', 'site', 'size', 'skin', 'slip', 'slow',
+            'snow', 'soft', 'soil', 'sold', 'sole', 'some', 'song', 'soon', 'sort', 'soul',
+            'spot', 'star', 'stay', 'step', 'stop', 'such', 'suit', 'sure', 'take', 'talk',
+            'tall', 'tank', 'tape', 'task', 'team', 'tell', 'tend', 'term', 'test', 'text',
+            'than', 'that', 'them', 'then', 'they', 'thin', 'this', 'thus', 'till', 'time',
+            'tiny', 'told', 'tone', 'took', 'tool', 'tour', 'town', 'tree', 'trip', 'true',
+            'turn', 'type', 'unit', 'upon', 'used', 'user', 'vary', 'vast', 'very', 'view',
+            'vote', 'wage', 'wait', 'wake', 'walk', 'wall', 'want', 'warm', 'wash', 'wave',
+            'ways', 'weak', 'wear', 'week', 'well', 'went', 'were', 'west', 'what', 'when',
+            'wide', 'wife', 'wild', 'will', 'wind', 'wine', 'wing', 'wire', 'wise', 'wish',
+            'with', 'wood', 'word', 'wore', 'work', 'yard', 'year', 'yeah', 'your', 'zero',
+            'zone', 'best', 'friend', 'love', 'hate', 'like', 'want', 'need', 'give', 'take',
             // 5-letter words
-            'about', 'above', 'abuse', 'actor', 'acute', 'admit', 'adopt', 'adult', 'after',
-            'again', 'agent', 'agree', 'ahead', 'alarm', 'album', 'alien', 'align', 'alike',
-            'alive', 'allow', 'alone', 'along', 'alter', 'among', 'angel', 'anger', 'angle',
-            'angry', 'apart', 'apple', 'apply', 'arena', 'argue', 'arise', 'armor', 'array',
-            'arrow', 'aside', 'asset', 'avoid', 'award', 'aware', 'awful', 'bacon', 'badge',
-            'basic', 'basis', 'beach', 'began', 'begin', 'being', 'belly', 'below', 'bench',
-            'birth', 'black', 'blade', 'blame', 'blank', 'blast', 'blend', 'bless', 'blind',
-            'block', 'blood', 'blown', 'board', 'boost', 'booth', 'bound', 'brain', 'brand',
-            'brass', 'brave', 'bread', 'break', 'breed', 'brick', 'bride', 'brief', 'bring',
-            'broad', 'broke', 'brook', 'brown', 'brush', 'build', 'built', 'bunch', 'burst',
-            'buyer', 'cabin', 'cable', 'calif', 'carry', 'catch', 'cause', 'chain', 'chair',
-            'chaos', 'charm', 'chart', 'chase', 'cheap', 'check', 'cheek', 'chest', 'chief',
-            'child', 'china', 'choir', 'chose', 'chunk', 'civic', 'civil', 'claim', 'class',
-            'clean', 'clear', 'clerk', 'click', 'cliff', 'climb', 'clock', 'close', 'cloth',
-            'cloud', 'coach', 'coast', 'colon', 'color', 'couch', 'could', 'count', 'court',
+            'about', 'above', 'abuse', 'actor', 'admit', 'adopt', 'adult', 'after', 'again',
+            'agent', 'agree', 'ahead', 'alarm', 'album', 'alien', 'align', 'alike', 'alive',
+            'allow', 'alone', 'along', 'alter', 'among', 'angel', 'anger', 'angle', 'angry',
+            'apart', 'apple', 'apply', 'arena', 'argue', 'arise', 'armor', 'array', 'arrow',
+            'aside', 'asset', 'avoid', 'award', 'aware', 'awful', 'basic', 'basis', 'beach',
+            'began', 'begin', 'being', 'below', 'bench', 'birth', 'black', 'blade', 'blame',
+            'blank', 'blast', 'blend', 'bless', 'blind', 'block', 'blood', 'blown', 'board',
+            'boost', 'booth', 'bound', 'brain', 'brand', 'brass', 'brave', 'bread', 'break',
+            'breed', 'brick', 'bride', 'brief', 'bring', 'broad', 'broke', 'brown', 'brush',
+            'build', 'built', 'bunch', 'burst', 'buyer', 'cabin', 'cable', 'carry', 'catch',
+            'cause', 'chain', 'chair', 'chaos', 'charm', 'chart', 'chase', 'cheap', 'check',
+            'chest', 'chief', 'child', 'china', 'chose', 'chunk', 'civic', 'civil', 'claim',
+            'class', 'clean', 'clear', 'clerk', 'click', 'cliff', 'climb', 'clock', 'close',
+            'cloth', 'cloud', 'coach', 'coast', 'color', 'couch', 'could', 'count', 'court',
             'cover', 'crack', 'craft', 'crash', 'crazy', 'cream', 'creek', 'crime', 'crisp',
             'cross', 'crowd', 'crown', 'cruel', 'crush', 'curve', 'cycle', 'daily', 'dance',
-            'dated', 'dealt', 'death', 'debut', 'delay', 'depth', 'devil', 'diary', 'dirty',
-            'doubt', 'dozen', 'draft', 'drain', 'drama', 'drank', 'drawn', 'dream', 'dress',
-            'dried', 'drift', 'drill', 'drink', 'drive', 'droit', 'drown', 'drove', 'dying',
-            'eager', 'early', 'earth', 'eight', 'elect', 'elite', 'empty', 'enemy', 'enjoy',
-            'enter', 'entry', 'equal', 'error', 'essay', 'event', 'every', 'exact', 'exist',
-            'extra', 'faith', 'false', 'fancy', 'fault', 'favor', 'feast', 'fence', 'ferry',
-            'fever', 'fiber', 'field', 'fifth', 'fifty', 'fight', 'final', 'first', 'fixed',
-            'flame', 'flash', 'flesh', 'float', 'flood', 'floor', 'flour', 'fluid', 'focus',
-            'force', 'forge', 'forth', 'forty', 'forum', 'found', 'frame', 'frank', 'fraud',
-            'fresh', 'front', 'frost', 'fruit', 'fully', 'funny', 'ghost', 'giant', 'given',
-            'glass', 'globe', 'glory', 'going', 'grace', 'grade', 'grain', 'grand', 'grant',
-            'grape', 'graph', 'grasp', 'grass', 'grave', 'great', 'green', 'greet', 'grief',
-            'grill', 'grind', 'gross', 'group', 'grove', 'grown', 'guard', 'guess', 'guest',
-            'guide', 'guilt', 'happy', 'harry', 'harsh', 'haven', 'heart', 'heavy', 'hello',
-            'hence', 'henry', 'horse', 'hotel', 'house', 'human', 'humor', 'ideal', 'image',
-            'imply', 'index', 'inner', 'input', 'intel', 'irony', 'issue', 'japan', 'jimmy',
-            'joint', 'jones', 'judge', 'juice', 'juicy', 'known', 'label', 'labor', 'laden',
-            'large', 'laser', 'later', 'laugh', 'layer', 'learn', 'lease', 'least', 'leave',
-            'legal', 'lemon', 'level', 'lewis', 'light', 'limit', 'linux', 'liver', 'local',
-            'lodge', 'logic', 'loose', 'lorry', 'loser', 'lover', 'lower', 'loyal', 'lucky',
-            'lunch', 'lying', 'magic', 'major', 'maker', 'march', 'maria', 'marry', 'match',
-            'maybe', 'mayor', 'meant', 'medal', 'media', 'melon', 'mercy', 'merge', 'merit',
-            'merry', 'metal', 'meter', 'midst', 'might', 'minor', 'minus', 'mixed', 'model',
-            'money', 'month', 'moral', 'motor', 'mount', 'mouse', 'mouth', 'movie', 'music',
-            'naked', 'naive', 'naval', 'nerve', 'never', 'newly', 'night', 'noble', 'noise',
-            'north', 'noted', 'novel', 'nurse', 'occur', 'ocean', 'offer', 'often', 'olive',
-            'onion', 'opera', 'orbit', 'order', 'organ', 'other', 'ought', 'outer', 'owner',
-            'oxide', 'ozone', 'paint', 'panel', 'panic', 'paper', 'party', 'pasta', 'patch',
-            'pause', 'peace', 'peach', 'pearl', 'penny', 'peter', 'phase', 'phone', 'photo',
-            'piano', 'piece', 'pilot', 'pinch', 'pitch', 'pizza', 'place', 'plain', 'plane',
-            'plant', 'plate', 'plaza', 'plead', 'pluck', 'point', 'polar', 'porch', 'posed',
-            'pound', 'power', 'press', 'price', 'pride', 'prime', 'print', 'prior', 'prize',
-            'probe', 'prone', 'proof', 'prose', 'proud', 'prove', 'proxy', 'pulse', 'punch',
-            'pupil', 'purse', 'queen', 'query', 'quest', 'quick', 'quiet', 'quite', 'quote',
-            'radar', 'radio', 'raise', 'rally', 'ranch', 'range', 'rapid', 'ratio', 'reach',
-            'react', 'ready', 'realm', 'rebel', 'refer', 'reign', 'relax', 'renew', 'reply',
-            'rider', 'ridge', 'rifle', 'right', 'rigor', 'rival', 'river', 'robot', 'rocky',
-            'roger', 'roman', 'rough', 'round', 'route', 'royal', 'rugby', 'rural', 'saint',
-            'salad', 'sally', 'salon', 'sandy', 'sarah', 'sauce', 'saved', 'scale', 'scare',
-            'scene', 'scent', 'score', 'scout', 'screw', 'seize', 'sense', 'serve', 'setup',
-            'seven', 'shade', 'shake', 'shall', 'shame', 'shape', 'share', 'shark', 'sharp',
-            'sheep', 'sheer', 'sheet', 'shelf', 'shell', 'shift', 'shine', 'shirt', 'shock',
-            'shoot', 'shore', 'short', 'shout', 'shown', 'sight', 'sigma', 'silly', 'simon',
-            'since', 'sixth', 'sixty', 'sized', 'skill', 'slave', 'sleep', 'slice', 'slide',
-            'slope', 'small', 'smart', 'smell', 'smile', 'smith', 'smoke', 'snake', 'solar',
-            'solid', 'solve', 'sorry', 'sound', 'south', 'space', 'spare', 'spark', 'speak',
-            'speed', 'spell', 'spend', 'spent', 'spice', 'spine', 'spite', 'split', 'spoke',
-            'sport', 'spray', 'squad', 'stack', 'staff', 'stage', 'stain', 'stake', 'stamp',
-            'stand', 'stark', 'start', 'state', 'stays', 'steady', 'steam', 'steel', 'steep',
-            'steer', 'stern', 'steve', 'stick', 'stiff', 'still', 'stock', 'stone', 'stood',
-            'stool', 'store', 'storm', 'story', 'strip', 'stuck', 'study', 'stuff', 'style',
-            'sugar', 'suite', 'sunny', 'super', 'surge', 'Susan', 'swear', 'sweat', 'sweep',
+            'dated', 'dealt', 'death', 'debut', 'delay', 'depth', 'devil', 'dirty', 'doubt',
+            'dozen', 'draft', 'drain', 'drama', 'drank', 'drawn', 'dream', 'dress', 'dried',
+            'drift', 'drill', 'drink', 'drive', 'drown', 'drove', 'dying', 'eager', 'early',
+            'earth', 'eight', 'elect', 'elite', 'empty', 'enemy', 'enjoy', 'enter', 'entry',
+            'equal', 'error', 'essay', 'event', 'every', 'exact', 'exist', 'extra', 'faith',
+            'false', 'fancy', 'fault', 'favor', 'feast', 'fence', 'fever', 'fiber', 'field',
+            'fifth', 'fifty', 'fight', 'final', 'first', 'fixed', 'flame', 'flash', 'flesh',
+            'float', 'flood', 'floor', 'flour', 'fluid', 'focus', 'force', 'forth', 'forty',
+            'forum', 'found', 'frame', 'frank', 'fraud', 'fresh', 'front', 'frost', 'fruit',
+            'fully', 'funny', 'ghost', 'giant', 'given', 'glass', 'globe', 'glory', 'going',
+            'grace', 'grade', 'grain', 'grand', 'grant', 'grape', 'graph', 'grasp', 'grass',
+            'grave', 'great', 'green', 'greet', 'grief', 'grill', 'grind', 'gross', 'group',
+            'grove', 'grown', 'guard', 'guess', 'guest', 'guide', 'guilt', 'happy', 'harsh',
+            'haven', 'heart', 'heavy', 'hello', 'hence', 'horse', 'hotel', 'house', 'human',
+            'humor', 'ideal', 'image', 'imply', 'index', 'inner', 'input', 'irony', 'issue',
+            'japan', 'joint', 'jones', 'judge', 'juice', 'known', 'label', 'labor', 'large',
+            'laser', 'later', 'laugh', 'layer', 'learn', 'lease', 'least', 'leave', 'legal',
+            'lemon', 'level', 'light', 'limit', 'liver', 'local', 'lodge', 'logic', 'loose',
+            'loser', 'lover', 'lower', 'loyal', 'lucky', 'lunch', 'lying', 'magic', 'major',
+            'maker', 'march', 'marry', 'match', 'maybe', 'mayor', 'meant', 'medal', 'media',
+            'mercy', 'merge', 'merit', 'merry', 'metal', 'meter', 'midst', 'might', 'minor',
+            'minus', 'mixed', 'model', 'money', 'month', 'moral', 'motor', 'mount', 'mouse',
+            'mouth', 'movie', 'music', 'naked', 'naval', 'nerve', 'never', 'newly', 'night',
+            'noble', 'noise', 'north', 'noted', 'novel', 'nurse', 'occur', 'ocean', 'offer',
+            'often', 'olive', 'onion', 'opera', 'orbit', 'order', 'organ', 'other', 'ought',
+            'outer', 'owner', 'paint', 'panel', 'panic', 'paper', 'party', 'pasta', 'patch',
+            'pause', 'peace', 'peach', 'pearl', 'penny', 'phase', 'phone', 'photo', 'piano',
+            'piece', 'pilot', 'pinch', 'pitch', 'pizza', 'place', 'plain', 'plane', 'plant',
+            'plate', 'plaza', 'point', 'polar', 'porch', 'pound', 'power', 'press', 'price',
+            'pride', 'prime', 'print', 'prior', 'prize', 'probe', 'proof', 'proud', 'prove',
+            'pulse', 'punch', 'pupil', 'queen', 'query', 'quest', 'quick', 'quiet', 'quite',
+            'quote', 'radar', 'radio', 'raise', 'rally', 'ranch', 'range', 'rapid', 'ratio',
+            'reach', 'react', 'ready', 'realm', 'rebel', 'refer', 'reign', 'relax', 'renew',
+            'reply', 'rider', 'ridge', 'rifle', 'right', 'rival', 'river', 'robot', 'rocky',
+            'roman', 'rough', 'round', 'route', 'royal', 'rugby', 'rural', 'saint', 'salad',
+            'salon', 'sandy', 'sauce', 'saved', 'scale', 'scare', 'scene', 'scent', 'score',
+            'scout', 'screw', 'seize', 'sense', 'serve', 'setup', 'seven', 'shade', 'shake',
+            'shall', 'shame', 'shape', 'share', 'shark', 'sharp', 'sheep', 'sheer', 'sheet',
+            'shelf', 'shell', 'shift', 'shine', 'shirt', 'shock', 'shoot', 'shore', 'short',
+            'shout', 'shown', 'sight', 'silly', 'simon', 'since', 'sixth', 'sixty', 'sized',
+            'skill', 'slave', 'sleep', 'slice', 'slide', 'slope', 'small', 'smart', 'smell',
+            'smile', 'smoke', 'snake', 'solar', 'solid', 'solve', 'sorry', 'sound', 'south',
+            'space', 'spare', 'spark', 'speak', 'speed', 'spell', 'spend', 'spent', 'spice',
+            'spite', 'split', 'spoke', 'sport', 'spray', 'squad', 'stack', 'staff', 'stage',
+            'stain', 'stake', 'stamp', 'stand', 'stark', 'start', 'state', 'stays', 'steam',
+            'steel', 'steep', 'steer', 'stern', 'stick', 'stiff', 'still', 'stock', 'stone',
+            'stood', 'stool', 'store', 'storm', 'story', 'strip', 'stuck', 'study', 'stuff',
+            'style', 'sugar', 'suite', 'sunny', 'super', 'surge', 'swear', 'sweat', 'sweep',
             'sweet', 'swept', 'swift', 'swing', 'sword', 'sworn', 'table', 'taken', 'taste',
             'taxes', 'teach', 'teeth', 'tempo', 'tends', 'tenor', 'tense', 'tenth', 'terms',
-            'terry', 'texas', 'thank', 'theft', 'their', 'theme', 'there', 'these', 'thick',
-            'thief', 'thing', 'think', 'third', 'those', 'three', 'threw', 'throw', 'thumb',
-            'tiger', 'tight', 'timer', 'title', 'today', 'token', 'tommy', 'tooth', 'topic',
-            'total', 'touch', 'tough', 'tower', 'trace', 'track', 'trade', 'trail', 'train',
-            'trait', 'trash', 'treat', 'trend', 'trial', 'tribe', 'trick', 'tried', 'tries',
-            'troop', 'truck', 'truly', 'trunk', 'trust', 'truth', 'tumor', 'tutor', 'twice',
-            'twist', 'tyler', 'under', 'undue', 'union', 'unite', 'unity', 'until', 'upper',
-            'upset', 'urban', 'usage', 'usual', 'valid', 'value', 'valve', 'vapor', 'venus',
-            'verse', 'video', 'vinyl', 'virus', 'visit', 'vista', 'vital', 'vivid', 'vocal',
-            'vogue', 'voice', 'voter', 'wagon', 'waste', 'watch', 'water', 'weary', 'wheel',
-            'where', 'which', 'while', 'white', 'whole', 'whose', 'woman', 'world', 'worry',
-            'worse', 'worst', 'worth', 'would', 'wound', 'wrist', 'write', 'wrong', 'wrote',
-            'yield', 'young', 'youth',
-            // 6-letter words
-            'abroad', 'absorb', 'accept', 'access', 'accord', 'across', 'acting', 'action',
-            'active', 'actual', 'advice', 'advise', 'affair', 'affect', 'affirm', 'afford',
-            'afraid', 'agency', 'agenda', 'almost', 'always', 'amount', 'animal', 'annual',
-            'answer', 'anyone', 'anyway', 'appeal', 'appear', 'around', 'arrive', 'artist',
-            'aspect', 'assert', 'assess', 'assign', 'assist', 'assume', 'assure', 'attach',
-            'attack', 'attend', 'author', 'barely', 'battle', 'beauty', 'became', 'become',
-            'before', 'behalf', 'behave', 'behind', 'belief', 'belong', 'better', 'beyond',
-            'bishop', 'border', 'borrow', 'Boston', 'bottle', 'bottom', 'bought', 'branch',
-            'breath', 'bridge', 'bright', 'broken', 'broker', 'bronze', 'bubble', 'bucket',
-            'budget', 'burden', 'bureau', 'butter', 'button', 'camera', 'campus', 'cancer',
-            'cannot', 'carbon', 'career', 'castle', 'cattle', 'caught', 'center', 'centre',
-            'chance', 'change', 'charge', 'chosen', 'church', 'circle', 'client', 'closed',
-            'closer', 'coffee', 'colony', 'column', 'combat', 'comedy', 'coming', 'commit',
-            'common', 'comply', 'copper', 'corner', 'costly', 'cotton', 'county', 'couple',
-            'course', 'cousin', 'create', 'credit', 'crisis', 'critic', 'custom', 'damage',
-            'danger', 'dealer', 'debate', 'decade', 'decent', 'decide', 'defeat', 'defend',
-            'define', 'degree', 'demand', 'depend', 'deputy', 'derive', 'desert', 'design',
-            'desire', 'detail', 'detect', 'device', 'devote', 'differ', 'dinner', 'direct',
-            'doctor', 'dollar', 'domain', 'donate', 'double', 'driven', 'driver', 'during',
-            'easily', 'eating', 'editor', 'effect', 'effort', 'eighth', 'either', 'eleven',
-            'emerge', 'empire', 'employ', 'enable', 'ending', 'energy', 'engage', 'engine',
-            'enough', 'ensure', 'entire', 'entity', 'equity', 'escape', 'estate', 'ethnic',
-            'evolve', 'exceed', 'except', 'excuse', 'expand', 'expect', 'expert', 'export',
-            'expose', 'extend', 'extent', 'fabric', 'facing', 'factor', 'failed', 'fairly',
-            'fallen', 'family', 'famous', 'farmer', 'father', 'fellow', 'female', 'fierce',
-            'figure', 'filing', 'finger', 'finish', 'fiscal', 'flight', 'flying', 'folder',
-            'follow', 'forced', 'forest', 'forget', 'formal', 'format', 'former', 'foster',
-            'fought', 'fourth', 'french', 'friend', 'frozen', 'future', 'galaxy', 'garden',
-            'gather', 'gender', 'gentle', 'german', 'global', 'golden', 'gotten', 'govern',
-            'ground', 'growth', 'guilty', 'guitar', 'handle', 'happen', 'hardly', 'headed',
-            'health', 'heaven', 'height', 'helped', 'hidden', 'highly', 'holder', 'honest',
-            'hoping', 'horror', 'impact', 'import', 'impose', 'income', 'indeed', 'infant',
-            'injury', 'inside', 'insist', 'intend', 'intent', 'invest', 'island', 'itself',
-            'jacket', 'jersey', 'joseph', 'junior', 'keeper', 'kidney', 'killed', 'knight',
-            'labour', 'lacked', 'landed', 'lately', 'latest', 'latter', 'launch', 'lawyer',
-            'leader', 'league', 'legacy', 'legend', 'length', 'lesson', 'letter', 'lights',
-            'likely', 'liquid', 'listen', 'living', 'locate', 'locked', 'longer', 'lookup',
-            'losing', 'lovely', 'lowest', 'luxury', 'mainly', 'manage', 'manner', 'manual',
-            'marble', 'margin', 'marine', 'marked', 'market', 'master', 'matter', 'mature',
-            'medium', 'member', 'memory', 'mental', 'merely', 'merger', 'method', 'middle',
-            'miller', 'mining', 'minute', 'mirror', 'mobile', 'modern', 'modest', 'modify',
-            'moment', 'monkey', 'monroe', 'morgan', 'morning', 'mostly', 'mother', 'motion',
-            'moving', 'murder', 'muscle', 'museum', 'mutual', 'myself', 'narrow', 'nation',
-            'native', 'nature', 'nearby', 'nearly', 'nelson', 'nickel', 'nobody', 'normal',
-            'notice', 'notion', 'number', 'object', 'obtain', 'office', 'offset', 'oldest',
-            'Oliver', 'online', 'opened', 'option', 'orange', 'origin', 'output', 'oxford',
-            'packed', 'palace', 'parent', 'parish', 'partly', 'passed', 'patent', 'patrol',
-            'patron', 'paying', 'people', 'pepper', 'period', 'permit', 'person', 'phrase',
-            'picked', 'planet', 'player', 'please', 'plenty', 'pocket', 'poetry', 'police',
-            'policy', 'portal', 'poster', 'potato', 'pottery', 'poverty', 'powder', 'praise',
-            'prayer', 'prefer', 'priest', 'prince', 'prison', 'profit', 'prompt', 'proper',
-            'proven', 'public', 'pursue', 'puzzle', 'rabbit', 'racial', 'random', 'rarely',
-            'rather', 'rating', 'reader', 'really', 'reason', 'recall', 'recent', 'recipe',
-            'record', 'reduce', 'reform', 'refuse', 'regard', 'regime', 'region', 'relate',
-            'relief', 'remain', 'remark', 'remedy', 'remote', 'remove', 'render', 'repair',
-            'repeat', 'report', 'rescue', 'resort', 'result', 'retail', 'retain', 'retire',
-            'return', 'reveal', 'review', 'reward', 'rhythm', 'riding', 'rising', 'robust',
-            'rocket', 'romans', 'ruling', 'runner', 'runway', 'sacred', 'safety', 'salary',
-            'salmon', 'sample', 'saving', 'saying', 'scheme', 'school', 'screen', 'script',
-            'search', 'season', 'second', 'secret', 'sector', 'secure', 'seeing', 'select',
-            'seller', 'senate', 'senior', 'series', 'server', 'settle', 'severe', 'sexual',
-            'shadow', 'shaped', 'shared', 'sheets', 'shield', 'shorts', 'should', 'shower',
-            'signal', 'signed', 'silent', 'silver', 'simple', 'simply', 'single', 'sister',
-            'slight', 'slowly', 'smooth', 'soccer', 'social', 'socket', 'sodium', 'solely',
-            'solved', 'sought', 'source', 'soviet', 'speech', 'sphere', 'spirit', 'spoken',
-            'spread', 'spring', 'square', 'stable', 'staged', 'status', 'steady', 'sticky',
-            'stolen', 'strain', 'strand', 'stream', 'street', 'stress', 'strict', 'strike',
-            'string', 'stroke', 'strong', 'struck', 'studio', 'stupid', 'submit', 'subtle',
-            'suburb', 'sudden', 'suffer', 'summer', 'summit', 'supply', 'surely', 'survey',
-            'symbol', 'system', 'talent', 'target', 'temple', 'tender', 'tennis', 'terror',
-            'thanks', 'theory', 'thirty', 'thomas', 'threat', 'thrown', 'ticket', 'timber',
-            'timing', 'tissue', 'toilet', 'tongue', 'toward', 'travel', 'treaty', 'tribal',
-            'tricks', 'triple', 'troops', 'tunnel', 'turkey', 'turned', 'twelve', 'twenty',
-            'unable', 'unfair', 'unique', 'united', 'unless', 'unlike', 'update', 'upload',
-            'useful', 'valley', 'valued', 'varied', 'vector', 'vendor', 'verbal', 'versus',
-            'vessel', 'victim', 'vienna', 'viewed', 'viewer', 'virgin', 'virtue', 'vision',
-            'visual', 'volume', 'walker', 'wallet', 'warmth', 'wealth', 'weapon', 'weekly',
-            'weight', 'wholly', 'wicked', 'widely', 'widget', 'wilson', 'window', 'winner',
-            'winter', 'wisdom', 'within', 'wonder', 'wooden', 'worker', 'worthy', 'wright',
-            'writer', 'yellow',
-            // 7+ letter words
-            'abandon', 'ability', 'absence', 'academy', 'account', 'accused', 'achieve', 'acquire',
-            'address', 'advance', 'adverse', 'advised', 'adviser', 'against', 'airline', 'airport',
-            'alcohol', 'alleged', 'already', 'ancient', 'another', 'anxiety', 'anybody', 'anymore',
-            'applied', 'appoint', 'approve', 'arrange', 'arrival', 'article', 'assault', 'average',
-            'awesome', 'backing', 'balance', 'banking', 'barrier', 'battery', 'bearing', 'beating',
-            'because', 'bedroom', 'believe', 'beneath', 'benefit', 'besides', 'between', 'billion',
-            'binding', 'biology', 'bizarre', 'blanket', 'blessed', 'blocked', 'blowing', 'booking',
-            'boolean', 'borough', 'bracket', 'brother', 'brought', 'browser', 'builder', 'burning',
-            'cabinet', 'calling', 'capable', 'capital', 'captain', 'caption', 'capture', 'careful',
-            'carrier', 'catalog', 'causing', 'caution', 'ceiling', 'central', 'century', 'certain',
-            'chamber', 'chapter', 'charity', 'charlie', 'charter', 'cheaper', 'checked', 'chicken',
-            'chronic', 'circuit', 'citizen', 'claimed', 'classic', 'cleared', 'clearly', 'climate',
-            'Clinton', 'closely', 'closing', 'clothes', 'cluster', 'coastal', 'coating', 'collect',
-            'college', 'combine', 'comfort', 'command', 'comment', 'compact', 'company', 'compare',
-            'compel', 'complex', 'concept', 'concern', 'conduct', 'confirm', 'connect', 'consent',
-            'consist', 'contact', 'contain', 'content', 'contest', 'context', 'control', 'convert',
-            'correct', 'council', 'counsel', 'counter', 'country', 'courage', 'covered', 'crashed',
-            'created', 'creator', 'cricket', 'crystal', 'culture', 'curious', 'current', 'cutting',
-            'dealing', 'decided', 'decline', 'default', 'defense', 'deficit', 'defined', 'deliver',
-            'density', 'deposit', 'derived', 'desktop', 'despite', 'destroy', 'develop', 'devoted',
-            'diamond', 'digital', 'diploma', 'dispute', 'distant', 'diverse', 'divided', 'divorce',
-            'durable', 'dynamic', 'earlier', 'earning', 'eastern', 'economy', 'edition', 'Edwards',
-            'elderly', 'elected', 'element', 'embrace', 'emperor', 'enabled', 'endless', 'enforce',
-            'engaged', 'enhance', 'evening', 'evident', 'exactly', 'examine', 'example', 'excited',
-            'exclude', 'execute', 'exhibit', 'existed', 'expense', 'explain', 'explore', 'express',
-            'extreme', 'factory', 'faculty', 'failing', 'failure', 'fantasy', 'fashion', 'fastest',
-            'fatigue', 'feature', 'federal', 'feeling', 'fiction', 'fifteen', 'fighter', 'finally',
-            'finance', 'finding', 'fishing', 'fitness', 'fitting', 'Florida', 'focused', 'foreign',
-            'forever', 'formula', 'Fortune', 'forward', 'founder', 'freedom', 'freight', 'frequent',
-            'further', 'futures', 'gateway', 'general', 'generic', 'genetic', 'genuine', 'getting',
-            'gilbert', 'glamour', 'glasses', 'glucose', 'goddess', 'gordon', 'Gourmet', 'granted',
-            'graphic', 'greater', 'greatly', 'growing', 'habitat', 'handful', 'hanging', 'Hansen',
-            'happens', 'harbour', 'harmony', 'heading', 'healthy', 'hearing', 'heavily', 'helpful',
-            'herself', 'highest', 'highway', 'himself', 'history', 'hitting', 'holding', 'holiday',
-            'Holland', 'horizon', 'hormone', 'Hosting', 'housing', 'however', 'hundred', 'Hungary',
-            'Hunting', 'husband', 'ignored', 'illegal', 'illness', 'imagine', 'imaging', 'immense',
-            'implies', 'implied', 'imposed', 'impress', 'improve', 'include', 'Indiana', 'indices',
-            'induced', 'initial', 'inquiry', 'insight', 'inspect', 'instant', 'instead', 'insulin',
-            'integer', 'intense', 'interim', 'interne', 'invalid', 'inverse', 'involve', 'ireland',
-            'Islamic', 'israeli', 'Italian', 'Jackson', 'jealous', 'Jeffrey', 'Johnson', 'journal',
-            'journey', 'jointly', 'justice', 'justify', 'keeping', 'kennedy', 'keyword', 'killing',
-            'kingdom', 'kitchen', 'knowing', 'lacking', 'landing', 'largely', 'largest', 'lasting',
-            'lateral', 'lawsuit', 'leading', 'learned', 'leather', 'leaving', 'leisure', 'lending',
-            'lengthy', 'leonard', 'lesbian', 'library', 'license', 'lighter', 'limited', 'Lincoln',
-            'listing', 'literal', 'loading', 'locally', 'located', 'logical', 'looking', 'lottery',
-            'machine', 'madison', 'magical', 'mailman', 'majesty', 'managed', 'manager', 'mandate',
-            'mankind', 'mansion', 'mapping', 'marking', 'married', 'martial', 'massive', 'matched',
-            'meaning', 'measure', 'medical', 'meeting', 'Melissa', 'mention', 'mercury', 'message',
-            'Michael', 'midtown', 'militia', 'million', 'mineral', 'minimal', 'minimum', 'minster',
-            'miracle', 'missing', 'mission', 'mistake', 'mixture', 'monitor', 'monster', 'monthly',
-            'Morocco', 'morning', 'mounted', 'mystery', 'narrate', 'natural', 'nearest', 'neither',
-            'nervous', 'network', 'neutral', 'nominee', 'notably', 'nothing', 'noticed', 'nuclear',
-            'numeric', 'nursing', 'obesity', 'observe', 'obvious', 'offered', 'officer', 'offline',
-            'ongoing', 'operate', 'opinion', 'optimal', 'organic', 'origins', 'Orleans', 'outdoor',
-            'outlook', 'outside', 'overall', 'overlap', 'oversee', 'package', 'painted', 'partial',
-            'partner', 'passing', 'passion', 'passive', 'patient', 'Patrick', 'patriot', 'pattern',
-            'payment', 'penalty', 'pending', 'pension', 'percent', 'perfect', 'perform', 'perhaps',
-            'persian', 'persist', 'phantom', 'physics', 'pioneer', 'pitched', 'placing', 'planned',
-            'planner', 'plastic', 'plateau', 'playing', 'pleased', 'podcast', 'pointer', 'popular',
-            'portion', 'portray', 'poverty', 'powered', 'prairie', 'precise', 'predict', 'premier',
-            'premise', 'premium', 'prepare', 'present', 'pressed', 'prevent', 'preview', 'primary',
-            'printer', 'privacy', 'private', 'problem', 'proceed', 'process', 'produce', 'product',
-            'profile', 'profits', 'program', 'project', 'promise', 'promote', 'prophet', 'propose',
-            'protect', 'protein', 'protest', 'provide', 'publish', 'pulling', 'pumpkin', 'punched',
-            'purpose', 'pursued', 'pushing', 'putting', 'qualify', 'quality', 'quantum', 'quarter',
-            'quickly', 'radical', 'railway', 'rainbow', 'raising', 'ranking', 'rapidly', 'reached',
-            'reacted', 'reactor', 'reading', 'readily', 'reality', 'realize', 'receive', 'recover',
-            'reduced', 'reflect', 'reforms', 'refugee', 'refusal', 'refused', 'regards', 'regular',
-            'related', 'relaxed', 'release', 'relieve', 'remains', 'removal', 'removed', 'renewed',
-            'replace', 'replied', 'require', 'rescued', 'reserve', 'resolve', 'respect', 'respond',
-            'restore', 'resumed', 'retired', 'returns', 'reunion', 'revenue', 'reverse', 'revised',
-            'revival', 'Richard', 'romance', 'routine', 'roughly', 'rounded', 'running', 'russian',
-            'satisfy', 'scandal', 'scatter', 'scholar', 'science', 'scratch', 'seating', 'seattle',
-            'section', 'secured', 'seeking', 'segment', 'seminar', 'senator', 'sending', 'sensing',
-            'servant', 'service', 'session', 'setting', 'settled', 'several', 'shallow', 'sharing',
-            'shelter', 'shifted', 'shortly', 'showing', 'sibling', 'silence', 'silicon', 'similar',
-            'sitting', 'sixteen', 'skilled', 'slavery', 'smaller', 'smoking', 'society', 'soldier',
-            'somehow', 'someone', 'sorting', 'Spanish', 'speaker', 'special', 'specify', 'sponsor',
-            'spotted', 'squeeze', 'stanley', 'starter', 'stating', 'station', 'stealth', 'Stephen',
-            'stewart', 'stopped', 'storage', 'strange', 'stretch', 'strings', 'student', 'studies',
-            'subject', 'succeed', 'success', 'suggest', 'suicide', 'summary', 'sunrise', 'support',
-            'suppose', 'supreme', 'surface', 'surgeon', 'surgery', 'surplus', 'survive', 'suspect',
-            'suspend', 'sustain', 'Swedish', 'tabloid', 'talking', 'teacher', 'teenage', 'telling',
-            'tension', 'terminal', 'terrain', 'testing', 'texture', 'theatre', 'therapy', 'thereby',
-            'thermal', 'thought', 'threads', 'through', 'thunder', 'tonight', 'toolbar', 'totally',
-            'touched', 'touring', 'tourist', 'towards', 'tracker', 'trading', 'traffic', 'tragedy',
-            'trailer', 'trainer', 'transit', 'trapped', 'travels', 'treated', 'trouble', 'trusted',
-            'trustee', 'tsunami', 'tuesday', 'turning', 'typical', 'ukraine', 'unified', 'uniform',
-            'unknown', 'unleash', 'unusual', 'updated', 'upgrade', 'upwards', 'utility', 'vaccine',
-            'vampire', 'vanilla', 'variety', 'various', 'varying', 'venture', 'verdict', 'version',
-            'veteran', 'viewing', 'village', 'vintage', 'violent', 'virtual', 'visible', 'visitor',
-            'vitamin', 'waiting', 'walking', 'wanting', 'warfare', 'warming', 'warning', 'warrant',
-            'warranty', 'washing', 'weapons', 'wealthy', 'weather', 'website', 'wedding', 'weekend',
-            'welcome', 'welfare', 'western', 'whatever', 'whereas', 'whether', 'whoever', 'william',
-            'willing', 'windows', 'winning', 'wireless', 'without', 'witness', 'workers', 'workout',
-            'worried', 'worship', 'wounded', 'wrapped', 'writing', 'written', 'younger', 'yourself',
-            'absolute', 'abstract', 'academic', 'accepted', 'accident', 'accuracy', 'accurate', 'achieved',
-            'activity', 'actually', 'addition', 'adequate', 'adjacent', 'adjusted', 'advanced', 'advocate',
-            'affected', 'africana', 'agencies', 'agreeing', 'aircraft', 'alliance', 'allowing', 'although',
-            'aluminum', 'american', 'analysis', 'ancestor', 'anderson', 'announce', 'anything', 'anywhere',
-            'apparent', 'appeared', 'approach', 'approval', 'approved', 'argument', 'arranged', 'artifact',
-            'artistic', 'assembly', 'assuming', 'athletic', 'attached', 'attorney', 'audience', 'autonomy',
-            'bachelor', 'backbone', 'bacteria', 'balanced', 'bankrupt', 'baseline', 'bathroom', 'becoming',
-            'behavior', 'believed', 'benjamin', 'berkeley', 'beverage', 'birthday', 'blocking', 'boundary',
-            'breaking', 'bringing', 'broadway', 'brothers', 'browsing', 'building', 'bulletin', 'business',
-            'calendar', 'campaign', 'campbell', 'capacity', 'carolina', 'carrying', 'category', 'catholic',
-            'centered', 'chairman', 'champion', 'changing', 'channels', 'chapters', 'charging', 'chemical',
-            'children', 'choosing', 'circular', 'civilian', 'claiming', 'cleaning', 'clearing', 'climbing',
-            'clinical', 'clothing', 'coaching', 'collapse', 'colonial', 'colorado', 'combined', 'comeback',
-            'commerce', 'commonly', 'compared', 'compiled', 'complete', 'composed', 'compound', 'computer',
-            'conclude', 'concrete', 'conflict', 'confused', 'congress', 'consider', 'constant', 'consumer',
-            'contacts', 'contains', 'continue', 'contract', 'contrary', 'contrast', 'controls', 'convince',
-            'convince', 'cookbook', 'copywright', 'corporate', 'corridor', 'counting', 'coverage', 'covering',
-            'creation', 'creative', 'creature', 'criminal', 'criteria', 'critical', 'crossing', 'cultural',
-            'currency', 'customer', 'database', 'daughter', 'davidson', 'deadline', 'deciding', 'decision',
-            'declared', 'decrease', 'decrepit', 'dedicate', 'defended', 'defender', 'defining', 'definite',
-            'delicate', 'delivery', 'democrat', 'describe', 'designer', 'desktops', 'detailed', 'detected',
-            'diabetes', 'dialogue', 'diameter', 'diamond', 'directly', 'director', 'disabled', 'disagree',
-            'disaster', 'disclose', 'discount', 'discover', 'disorder', 'dispatch', 'disposal', 'disposed',
-            'distance', 'distinct', 'district', 'dividend', 'doctrine', 'document', 'domestic', 'dominant',
-            'dominate', 'donation', 'doubling', 'download', 'downtown', 'dramatic', 'dressing', 'drinking',
-            'dropping', 'duration', 'dwelling', 'dynamics', 'earnings', 'economic', 'educator', 'educator',
-            'eighteen', 'election', 'electric', 'electron', 'elephant', 'eligible', 'embedded', 'emerging',
-            'emphasis', 'employee', 'employer', 'enabling', 'enclosed', 'encoding', 'engineer', 'enormous',
-            'entering', 'entirely', 'entitled', 'entrance', 'envelope', 'equality', 'equation', 'equipped',
-            'escalate', 'estimate', 'ethernet', 'european', 'evaluate', 'evenings', 'eventual', 'everyday',
-            'everyone', 'evidence', 'evolving', 'examined', 'exchange', 'excluded', 'exciting', 'executed',
-            'exercise', 'existing', 'expanded', 'expected', 'explicit', 'explored', 'explorer', 'exposure',
-            'extended', 'external', 'fabulous', 'facility', 'familiar', 'families', 'favorite', 'featured',
-            'feedback', 'festival', 'fighting', 'filename', 'filtered', 'finalist', 'finalist', 'finalist',
-            'finalize', 'financed', 'finished', 'firearms', 'firmware', 'floating', 'flooding', 'florence',
-            'focusing', 'followed', 'follower', 'football', 'forecast', 'forensic', 'formerly', 'formulas',
-            'fortress', 'founding', 'fourteen', 'fraction', 'fragment', 'franklin', 'freehold', 'freezing',
-            'frequent', 'friendly', 'frontier', 'fruition', 'fulltime', 'function', 'gambling', 'gathered',
-            'generate', 'generous', 'geometry', 'glossary', 'gorgeous', 'governor', 'graduate', 'graphics',
-            'grateful', 'greatest', 'greeting', 'grounding', 'guardian', 'guidance', 'guidelin', 'handling',
-            'handsome', 'happened', 'hardware', 'harrison', 'headline', 'healing', 'healthier', 'highland',
-            'historic', 'homework', 'homepage', 'honestly', 'honorary', 'horrible', 'hospital', 'hostages',
-            'humanity', 'hundreds', 'hydrogen', 'identify', 'identity', 'ignoring', 'illusion', 'imperial',
-            'implicit', 'imported', 'imposing', 'improved', 'incident', 'included', 'includes', 'incoming',
-            'increase', 'indicate', 'indirect', 'infected', 'inferior', 'infinite', 'infinity', 'informed',
-            'inherent', 'initiate', 'injuries', 'innocent', 'insisted', 'inspired', 'instance', 'integral',
-            'intended', 'interact', 'interest', 'interior', 'internal', 'interval', 'intimate', 'invasion',
-            'inventor', 'invested', 'investor', 'invoking', 'involved', 'isolated', 'issuance', 'japanese',
-            'jennifer', 'jonathan', 'journals', 'judgment', 'judicial', 'junction', 'keyboard', 'kidnapped',
-            'kindness', 'knocking', 'labeling', 'landlord', 'landmark', 'language', 'latitude', 'laughing',
-            'launched', 'layering', 'learning', 'lecturer', 'leftover', 'leverage', 'liberals', 'licensed',
-            'lifetime', 'lighting', 'limiting', 'literacy', 'literary', 'litigant', 'locating', 'location',
-            'logistic', 'luncheon', 'magazine', 'magnetic', 'maintain', 'majority', 'malaysia', 'managing',
-            'manifest', 'marathon', 'margaret', 'marginal', 'marshall', 'maryland', 'massacre', 'material',
-            'matrices', 'matthews', 'maximize', 'measured', 'mechanic', 'medicine', 'medieval', 'meetings',
-            'memorial', 'memories', 'mentally', 'merchant', 'michigan', 'midnight', 'militant', 'military',
-            'millions', 'minister', 'ministry', 'minority', 'moderate', 'modified', 'momentum', 'monetary',
-            'monitors', 'moreover', 'mortgage', 'motorola', 'mountain', 'mounting', 'movement', 'multiple',
-            'mushroom', 'mustache', 'mutation', 'national', 'navigate', 'negative', 'neighbor', 'networks',
-            'newcastle', 'nicholas', 'nineteen', 'normally', 'northern', 'notebook', 'november', 'numerous',
-            'obituary', 'objected', 'observer', 'obtained', 'occasion', 'occupied', 'occurred', 'offering',
-            'official', 'oklahoma', 'olympiad', 'olympics', 'omission', 'operator', 'opponent', 'opposite',
-            'optimism', 'optional', 'ordinary', 'organize', 'oriental', 'original', 'outbreak', 'overcome',
-            'overhead', 'overlook', 'overseas', 'overtime', 'overview', 'painting', 'parallel', 'parental',
-            'particle', 'passport', 'password', 'pastries', 'pastoral', 'pathetic', 'patience', 'patterns',
-            'pavilion', 'peaceful', 'peculiar', 'pedantic', 'pentagon', 'perceive', 'periodic', 'personal',
-            'persuade', 'petition', 'pharmacy', 'phillips', 'physical', 'pictures', 'pipeline', 'pitching',
-            'platform', 'platinum', 'pleasure', 'pointing', 'policies', 'polished', 'politics', 'poolside',
-            'popular', 'populate', 'portable', 'portland', 'portrait', 'portugal', 'position', 'positive',
-            'possible', 'possibly', 'postcard', 'powerful', 'practice', 'precious', 'pregnant', 'prepared',
-            'presence', 'preserve', 'pressing', 'pressure', 'prestige', 'previous', 'princess', 'printing',
-            'priority', 'prisoner', 'probable', 'probably', 'problems', 'proceeds', 'produced', 'producer',
-            'profiles', 'profound', 'progress', 'projects', 'promised', 'prompted', 'properly', 'property',
-            'proposal', 'proposed', 'prospect', 'protocol', 'provided', 'province', 'provider', 'prudence',
-            'publicly', 'purchase', 'pursuing', 'quantity', 'quarters', 'question', 'quotient', 'randomly',
-            'rational', 'reaching', 'reaction', 'readable', 'readings', 'realized', 'reasoned', 'reasoned',
-            'received', 'receiver', 'recorded', 'recorder', 'recovery', 'recycled', 'redesign', 'redirect',
-            'reducing', 'reducing', 'reducing', 'referral', 'referred', 'reflects', 'regional', 'register',
-            'regulate', 'rejected', 'relation', 'relative', 'relevant', 'reliable', 'relieved', 'religion',
-            'relocate', 'remained', 'remember', 'reminded', 'remotely', 'removing', 'rendered', 'renowned',
-            'repeated', 'replaced', 'reported', 'reporter', 'republic', 'requests', 'required', 'research',
-            'reserved', 'resident', 'resigned', 'resolved', 'resource', 'responds', 'response', 'restored',
-            'restrict', 'resulted', 'retained', 'retiring', 'retrieve', 'returned', 'revealed', 'revenues',
-            'reversal', 'reversed', 'reviewed', 'reviewer', 'revision', 'richmond', 'ridicule', 'robotics',
-            'romantic', 'rotation', 'routines', 'sandwich', 'sanction', 'saturday', 'scenario', 'schedule',
-            'sciences', 'scotland', 'scratchy', 'seasonal', 'seconded', 'secretly', 'sections', 'securing',
-            'security', 'segments', 'selected', 'selector', 'semester', 'seminars', 'senators', 'sentence',
-            'separate', 'sequence', 'sergeant', 'services', 'sessions', 'settings', 'settling', 'shepherd',
-            'shipment', 'shipping', 'shooting', 'shopping', 'shortage', 'shortest', 'shoulder', 'shutdown',
-            'siblings', 'sickness', 'sidewalk', 'signaled', 'silently', 'simonsays', 'simplest', 'simulate',
-            'singular', 'situated', 'skeleton', 'slipping', 'smallest', 'snowfall', 'socially', 'software',
-            'soldiers', 'solution', 'somebody', 'sometime', 'somewhat', 'southern', 'spanning', 'speaking',
-            'specific', 'spectrum', 'spending', 'spinning', 'sporting', 'springer', 'squadron', 'squeezed',
-            'staffing', 'standard', 'standing', 'standoff', 'stanford', 'starting', 'stations', 'statutes',
-            'steadily', 'steering', 'stepping', 'sterling', 'stocking', 'stopping', 'straight', 'stranger',
-            'strategy', 'strength', 'stressed', 'strictly', 'striking', 'stripped', 'stronger', 'strongly',
-            'struggle', 'stunning', 'stylized', 'subjects', 'suburban', 'suddenly', 'suffered', 'suitable',
-            'sullivan', 'summarize', 'sunshine', 'superior', 'supplied', 'supplier', 'supplies', 'supports',
-            'supposed', 'suppress', 'surfaces', 'surgical', 'surprise', 'surround', 'survival', 'survived',
-            'survivor', 'suspects', 'spending', 'swimming', 'switched', 'syllabus', 'symbolic', 'sympathy',
-            'symptoms', 'syndrome', 'tactical', 'talented', 'targeted', 'taxation', 'taxpayer', 'teachers',
-            'teaching', 'teammate', 'teamwork', 'technolo', 'teenager', 'telegram', 'template', 'temporal',
-            'tendency', 'terminal', 'terrible', 'terrific', 'tertiary', 'textbook', 'thankful', 'theaters',
-            'thinking', 'thirteen', 'thompson', 'thorough', 'thoughts', 'thousand', 'threaten', 'thursday',
-            'timeline', 'together', 'tomorrow', 'touching', 'toughest', 'touchpad', 'tourists', 'tracking',
-            'traction', 'trading', 'training', 'transfer', 'transient', 'transmit', 'traveled', 'treasure',
-            'treasury', 'treating', 'trillion', 'troubled', 'tutorial', 'twilight', 'ultimate', 'umbrella',
-            'uncommon', 'underlie', 'undoubtedly', 'unfolded', 'unfortunate', 'uniforms', 'universe', 'unlikely',
-            'unlocked', 'unsigned', 'unstable', 'upcoming', 'updating', 'upgraded', 'urgently', 'username',
-            'vacation', 'validity', 'valuable', 'variable', 'variance', 'variants', 'vehicles', 'ventures',
-            'verified', 'versions', 'vertical', 'veterans', 'victoria', 'virginia', 'virtually', 'visitors',
-            'volatile', 'volcanic', 'warranty', 'watchdog', 'watching', 'weakness', 'wealthier', 'weighting',
-            'whatever', 'whenever', 'wherever', 'wildlife', 'williams', 'windowed', 'wintrier', 'wireless',
-            'withdraw', 'withheld', 'wondered', 'woodland', 'workshop', 'wounding', 'wrapping', 'writings',
-            'yearbook', 'yielding', 'yourself', 'youthful', 'abstract', 'abundant', 'academic', 'accident',
-            'computer', 'elephant', 'mountain', 'baseball', 'football', 'keyboard', 'umbrella', 'sandwich',
-            'notebook', 'treasure', 'universe', 'alphabet', 'backpack', 'calendar', 'dinosaur', 'envelope',
-            'firework', 'goldfish', 'hospital', 'icecream', 'jukebox', 'kangaroo', 'lollipop', 'mushroom',
-            'necklace', 'optimism', 'pancakes', 'question', 'railroad', 'stairway', 'textbook', 'vacation',
-            'waterfall', 'xylophone', 'yearbook', 'zeppelin'
+            'texas', 'thank', 'theft', 'their', 'theme', 'there', 'these', 'thick', 'thief',
+            'thing', 'think', 'third', 'those', 'three', 'threw', 'throw', 'thumb', 'tiger',
+            'tight', 'timer', 'title', 'today', 'token', 'tooth', 'topic', 'total', 'touch',
+            'tough', 'tower', 'trace', 'track', 'trade', 'trail', 'train', 'trait', 'trash',
+            'treat', 'trend', 'trial', 'tribe', 'trick', 'tried', 'tries', 'troop', 'truck',
+            'truly', 'trunk', 'trust', 'truth', 'tumor', 'tutor', 'twice', 'twist', 'under',
+            'undue', 'union', 'unite', 'unity', 'until', 'upper', 'upset', 'urban', 'usage',
+            'usual', 'valid', 'value', 'valve', 'vapor', 'verse', 'video', 'virus', 'visit',
+            'vista', 'vital', 'vivid', 'vocal', 'vogue', 'voice', 'voter', 'wagon', 'waste',
+            'watch', 'water', 'weary', 'wheel', 'where', 'which', 'while', 'white', 'whole',
+            'whose', 'woman', 'world', 'worry', 'worse', 'worst', 'worth', 'would', 'wound',
+            'wrist', 'write', 'wrong', 'wrote', 'yield', 'young', 'youth',
+            // 6+ letter words commonly used in phrases
+            'friend', 'always', 'before', 'people', 'should', 'through', 'really', 'better',
+            'family', 'moment', 'person', 'things', 'little', 'around', 'simple', 'change',
+            'action', 'speaks', 'louder', 'words', 'practice', 'makes', 'perfect', 'actions',
+            'beauty', 'beholder', 'birds', 'feather', 'flock', 'together', 'blood', 'thicker',
+            'broken', 'clock', 'twice', 'curiosity', 'killed', 'early', 'catches', 'worm',
+            'every', 'cloud', 'silver', 'lining', 'fortune', 'favors', 'brave', 'grass',
+            'greener', 'other', 'side', 'knowledge', 'power', 'laughter', 'medicine',
+            'money', 'talks', 'necessity', 'mother', 'invention', 'penny', 'saved', 'earned',
+            'picture', 'thousand', 'silence', 'golden', 'squeaky', 'wheel', 'gets', 'grease',
+            'stitch', 'time', 'saves', 'nine', 'rolling', 'stone', 'gathers', 'moss',
+            'apple', 'doctor', 'keeps', 'barking', 'seldom', 'bites', 'strike', 'iron',
+            'absence', 'heart', 'grow', 'fonder', 'bitter', 'pill', 'swallow', 'blessing',
+            'disguise', 'bold', 'beautiful', 'break', 'camel', 'last', 'straw', 'calm',
+            'storm', 'charity', 'begins', 'home', 'cleanliness', 'godliness', 'count',
+            'chickens', 'hatch', 'different', 'strokes', 'folks', 'doubt', 'without',
+            'easier', 'said', 'done', 'empty', 'vessels', 'noise', 'enough', 'rope',
+            'hang', 'himself', 'fair', 'weather', 'fish', 'plenty', 'fool', 'parted',
+            'forbidden', 'fruit', 'sweetest', 'forgive', 'forget', 'give', 'inch', 'mile',
+            'hands', 'idle', 'devil', 'workshop', 'haste', 'waste', 'history', 'repeats',
+            'itself', 'honest', 'policy', 'ignorance', 'bliss', 'jack', 'trades', 'master',
+            'none', 'killing', 'kindness', 'learning', 'process', 'leopard', 'spots',
+            'less', 'more', 'look', 'leap', 'lose', 'battle', 'misery', 'loves', 'company',
+            'need', 'friend', 'indeed', 'news', 'good', 'object', 'lesson', 'once', 'bitten',
+            'twice', 'shy', 'ounce', 'prevention', 'pound', 'cure', 'patience', 'virtue',
+            'pays', 'pride', 'fall', 'proof', 'pudding', 'eating', 'rome', 'built',
+            'rotten', 'spoils', 'bunch', 'seeing', 'believing', 'slow', 'steady', 'wins',
+            'race', 'speak', 'mind', 'thinking', 'truth', 'hurts', 'variety', 'spice',
+            'life', 'walls', 'ears', 'water', 'bridge', 'wise', 'ways', 'yourself',
+            'best', 'mans', 'think', 'therefore', 'exist', 'carpe', 'diem', 'seize',
+            'veni', 'vidi', 'vici', 'came', 'conquered', 'love', 'hate', 'live', 'laugh',
+            'dream', 'believe', 'achieve', 'impossible', 'nothing', 'everything', 'possible'
         ]);
 
-        // Level clues - crossword style hints with answers
+        // Level clues - phrases to construct
         const LEVELS = [
-            { clue: "Man's best friend", answer: "dog", hint: "3 letters" },
-            { clue: "Opposite of night", answer: "day", hint: "3 letters" },
-            { clue: "You sleep in this", answer: "bed", hint: "3 letters" },
-            { clue: "Feline pet", answer: "cat", hint: "3 letters" },
-            { clue: "Opposite of cold", answer: "hot", hint: "3 letters" },
-            { clue: "Large body of salt water", answer: "ocean", hint: "5 letters" },
-            { clue: "Frozen water", answer: "ice", hint: "3 letters" },
-            { clue: "Tells time on your wrist", answer: "watch", hint: "5 letters" },
-            { clue: "Where birds live", answer: "nest", hint: "4 letters" },
-            { clue: "Opposite of small", answer: "large", hint: "5 letters" },
-            { clue: "A fruit that keeps the doctor away", answer: "apple", hint: "5 letters" },
-            { clue: "King of the jungle", answer: "lion", hint: "4 letters" },
-            { clue: "It rises in the east", answer: "sun", hint: "3 letters" },
-            { clue: "You write with this", answer: "pen", hint: "3 letters" },
-            { clue: "Round toy that bounces", answer: "ball", hint: "4 letters" },
-            { clue: "Where you cook food", answer: "kitchen", hint: "7 letters" },
-            { clue: "Vehicle with two wheels", answer: "bike", hint: "4 letters" },
-            { clue: "Sweet dessert with candles", answer: "cake", hint: "4 letters" },
-            { clue: "The organ that pumps blood", answer: "heart", hint: "5 letters" },
-            { clue: "Used to unlock doors", answer: "key", hint: "3 letters" },
-            { clue: "Musical instrument with keys", answer: "piano", hint: "5 letters" },
-            { clue: "Winged insect that makes honey", answer: "bee", hint: "3 letters" },
-            { clue: "Tall plant with a trunk", answer: "tree", hint: "4 letters" },
-            { clue: "You read this for stories", answer: "book", hint: "4 letters" },
-            { clue: "Night light in the sky", answer: "moon", hint: "4 letters" },
-            { clue: "Flying machine", answer: "plane", hint: "5 letters" },
-            { clue: "It falls from clouds", answer: "rain", hint: "4 letters" },
-            { clue: "Precious yellow metal", answer: "gold", hint: "4 letters" },
-            { clue: "You walk through this to enter", answer: "door", hint: "4 letters" },
-            { clue: "Game played with a bat", answer: "baseball", hint: "8 letters" },
-            { clue: "Portable computer", answer: "laptop", hint: "6 letters" },
-            { clue: "Striped horse-like animal", answer: "zebra", hint: "5 letters" },
-            { clue: "Underwater breathing fish organ", answer: "gills", hint: "5 letters" },
-            { clue: "Protects you from rain", answer: "umbrella", hint: "8 letters" },
-            { clue: "Place for learning", answer: "school", hint: "6 letters" },
-            { clue: "Morning meal", answer: "breakfast", hint: "9 letters" },
-            { clue: "Carries blood through body", answer: "veins", hint: "5 letters" },
-            { clue: "Device for calling people", answer: "phone", hint: "5 letters" },
-            { clue: "Frozen treat on a stick", answer: "popsicle", hint: "8 letters" },
-            { clue: "Building for worship", answer: "church", hint: "6 letters" }
+            { clue: "What you say when someone helps you", answer: ["thank", "you"], minWords: 2 },
+            { clue: "Greeting in the morning", answer: ["good", "morning"], minWords: 2 },
+            { clue: "What do you call a man's closest companion?", answer: ["best", "friend"], minWords: 2 },
+            { clue: "The truth can be painful", answer: ["truth", "hurts"], minWords: 2 },
+            { clue: "Seeing is...", answer: ["seeing", "is", "believing"], minWords: 2 },
+            { clue: "What makes perfect?", answer: ["practice", "makes", "perfect"], minWords: 2 },
+            { clue: "Slow and steady wins the...", answer: ["slow", "steady", "wins", "race"], minWords: 3 },
+            { clue: "An apple a day keeps the doctor...", answer: ["apple", "day", "doctor", "away"], minWords: 3 },
+            { clue: "Knowledge is...", answer: ["knowledge", "is", "power"], minWords: 2 },
+            { clue: "Actions speak louder than...", answer: ["actions", "speak", "louder", "words"], minWords: 3 },
+            { clue: "What does laughter do?", answer: ["laughter", "best", "medicine"], minWords: 2 },
+            { clue: "Time flies when you're having...", answer: ["time", "flies", "fun"], minWords: 2 },
+            { clue: "Home is where the heart...", answer: ["home", "heart", "is"], minWords: 2 },
+            { clue: "A penny saved is a penny...", answer: ["penny", "saved", "earned"], minWords: 2 },
+            { clue: "The early bird catches the...", answer: ["early", "bird", "catches", "worm"], minWords: 3 },
+            { clue: "Every cloud has a silver...", answer: ["cloud", "silver", "lining"], minWords: 2 },
+            { clue: "Better late than...", answer: ["better", "late", "never"], minWords: 2 },
+            { clue: "When in Rome, do as the Romans...", answer: ["rome", "romans", "do"], minWords: 2 },
+            { clue: "Curiosity killed the...", answer: ["curiosity", "killed", "cat"], minWords: 2 },
+            { clue: "Birds of a feather flock...", answer: ["birds", "feather", "flock", "together"], minWords: 3 },
         ];
+
+        // Game configuration
+        const CONFIG = {
+            gridRows: 6,
+            gridCols: 7,
+            fallSpeed: 2000, // ms between row drops
+            minWordLength: 3
+        };
 
         // Game state
         let gameState = {
             level: 1,
             score: 0,
-            lives: 3,
             currentClue: null,
-            collectedLetters: [],
-            wordSlots: [],
-            fallingLetters: [],
-            gameInterval: null,
-            letterSpawnInterval: null,
-            isPlaying: false,
-            draggedLetter: null,
-            draggedFromTray: false,
-            draggedTrayIndex: -1
+            grid: [],
+            fallingRow: null,
+            fallingRowIndex: -1,
+            stackedRows: 0,
+            foundWords: [],
+            selectedWords: [],
+            phase: 'falling', // 'falling' or 'words'
+            fallInterval: null,
+            isPlaying: false
         };
 
         // DOM Elements
-        const gameArea = document.getElementById('game-area');
-        const letterTray = document.getElementById('letter-tray');
-        const wordSlotsContainer = document.getElementById('word-slots');
+        const gridContainer = document.getElementById('grid-container');
+        const wordPhase = document.getElementById('word-phase');
+        const foundWordsContainer = document.getElementById('found-words');
+        const answerWordsContainer = document.getElementById('answer-words');
         const clueText = document.getElementById('clue-text');
-        const clueHint = document.getElementById('clue-hint');
+        const tapHint = document.getElementById('tap-hint');
         const levelDisplay = document.getElementById('level');
         const scoreDisplay = document.getElementById('score');
-        const livesDisplay = document.getElementById('lives');
+        const rowsLeftDisplay = document.getElementById('rows-left');
         const submitBtn = document.getElementById('submit-btn');
         const clearBtn = document.getElementById('clear-btn');
 
@@ -1042,35 +814,24 @@
             document.getElementById('start-btn').addEventListener('click', startGame);
             document.getElementById('next-level-btn').addEventListener('click', nextLevel);
             document.getElementById('restart-btn').addEventListener('click', restartGame);
-            submitBtn.addEventListener('click', submitWord);
-            clearBtn.addEventListener('click', clearWord);
-
-            // Touch and mouse events for game area (catching letters)
-            gameArea.addEventListener('mouseup', handleGameAreaDrop);
-            gameArea.addEventListener('touchend', handleGameAreaDrop);
-
-            // Global drag events
-            document.addEventListener('mousemove', handleDrag);
-            document.addEventListener('touchmove', handleDrag, { passive: false });
-            document.addEventListener('mouseup', handleDragEnd);
-            document.addEventListener('touchend', handleDragEnd);
+            submitBtn.addEventListener('click', submitAnswer);
+            clearBtn.addEventListener('click', clearAnswer);
         }
 
         function startGame() {
             gameState = {
                 level: 1,
                 score: 0,
-                lives: 3,
                 currentClue: null,
-                collectedLetters: [],
-                wordSlots: [],
-                fallingLetters: [],
-                gameInterval: null,
-                letterSpawnInterval: null,
-                isPlaying: true,
-                draggedLetter: null,
-                draggedFromTray: false,
-                draggedTrayIndex: -1
+                grid: [],
+                fallingRow: null,
+                fallingRowIndex: -1,
+                stackedRows: 0,
+                foundWords: [],
+                selectedWords: [],
+                phase: 'falling',
+                fallInterval: null,
+                isPlaying: true
             };
 
             updateUI();
@@ -1079,12 +840,19 @@
         }
 
         function loadLevel() {
-            // Clear previous state
-            gameArea.innerHTML = '';
-            letterTray.innerHTML = '';
-            gameState.collectedLetters = [];
-            gameState.wordSlots = [];
-            gameState.fallingLetters = [];
+            // Reset state for new level
+            gameState.grid = [];
+            gameState.fallingRow = null;
+            gameState.fallingRowIndex = -1;
+            gameState.stackedRows = 0;
+            gameState.foundWords = [];
+            gameState.selectedWords = [];
+            gameState.phase = 'falling';
+
+            // Initialize empty grid
+            for (let i = 0; i < CONFIG.gridRows; i++) {
+                gameState.grid.push(new Array(CONFIG.gridCols).fill(null));
+            }
 
             // Get level clue
             const levelIndex = (gameState.level - 1) % LEVELS.length;
@@ -1092,417 +860,386 @@
 
             // Update clue display
             clueText.textContent = gameState.currentClue.clue;
-            clueHint.textContent = `(${gameState.currentClue.hint})`;
+            tapHint.style.display = 'block';
 
-            // Create word slots
-            createWordSlots(gameState.currentClue.answer.length);
+            // Hide word phase
+            wordPhase.classList.remove('active');
 
-            // Start spawning letters
-            startLetterSpawning();
+            // Render grid
+            renderGrid();
+            updateUI();
 
-            // Start game loop
-            gameState.gameInterval = setInterval(gameLoop, 16);
+            // Start falling rows
+            spawnFallingRow();
+            startFalling();
         }
 
-        function createWordSlots(count) {
-            wordSlotsContainer.innerHTML = '';
-            gameState.wordSlots = [];
+        function renderGrid() {
+            gridContainer.innerHTML = '';
 
-            for (let i = 0; i < count; i++) {
-                const slot = document.createElement('div');
-                slot.className = 'word-slot';
-                slot.dataset.index = i;
-                slot.addEventListener('dragover', (e) => e.preventDefault());
-                slot.addEventListener('drop', (e) => handleSlotDrop(e, i));
+            for (let row = 0; row < CONFIG.gridRows; row++) {
+                const rowEl = document.createElement('div');
+                rowEl.className = 'letter-row';
+                rowEl.dataset.row = row;
 
-                // Touch events for slots
-                slot.addEventListener('touchend', (e) => {
-                    if (gameState.draggedLetter && gameState.draggedFromTray) {
-                        handleSlotDrop(e, i);
+                for (let col = 0; col < CONFIG.gridCols; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'letter-cell';
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+
+                    const letter = gameState.grid[row][col];
+                    if (letter) {
+                        cell.textContent = letter;
+                        cell.classList.add('filled');
                     }
-                });
 
-                wordSlotsContainer.appendChild(slot);
-                gameState.wordSlots.push({ element: slot, letter: null });
+                    rowEl.appendChild(cell);
+                }
+
+                gridContainer.appendChild(rowEl);
+            }
+
+            // Render falling row if exists
+            if (gameState.fallingRow && gameState.fallingRowIndex >= 0) {
+                const rowEl = gridContainer.children[gameState.fallingRowIndex];
+                if (rowEl) {
+                    rowEl.classList.add('falling');
+                    rowEl.addEventListener('click', shuffleFallingRow);
+                    rowEl.addEventListener('touchstart', shuffleFallingRow);
+
+                    const cells = rowEl.querySelectorAll('.letter-cell');
+                    cells.forEach((cell, col) => {
+                        cell.textContent = gameState.fallingRow[col];
+                        cell.classList.add('falling');
+                        cell.classList.remove('filled');
+                    });
+                }
             }
         }
 
-        function startLetterSpawning() {
-            if (gameState.letterSpawnInterval) {
-                clearInterval(gameState.letterSpawnInterval);
-            }
+        function generateRandomRow() {
+            const answer = gameState.currentClue.answer;
+            const row = [];
 
-            // Initial letters
-            for (let i = 0; i < 3; i++) {
-                setTimeout(() => spawnLetter(), i * 500);
-            }
+            // Include some letters from the answer words
+            const answerLetters = answer.join('').toUpperCase().split('');
 
-            // Continue spawning
-            const spawnRate = Math.max(1500 - (gameState.level * 100), 800);
-            gameState.letterSpawnInterval = setInterval(spawnLetter, spawnRate);
-        }
-
-        function spawnLetter() {
-            if (!gameState.isPlaying) return;
-            if (gameState.fallingLetters.length >= 8) return;
-
-            const answer = gameState.currentClue.answer.toUpperCase();
-            let letter;
-
-            // 60% chance to spawn a letter from the answer
-            if (Math.random() < 0.6) {
-                letter = answer[Math.floor(Math.random() * answer.length)];
-            } else {
-                // Random letter with weighted distribution
-                const vowels = 'AEIOU';
-                const consonants = 'BCDFGHJKLMNPQRSTVWXYZ';
-                letter = Math.random() < 0.4
-                    ? vowels[Math.floor(Math.random() * vowels.length)]
-                    : consonants[Math.floor(Math.random() * consonants.length)];
-            }
-
-            const gameAreaRect = gameArea.getBoundingClientRect();
-            const letterSize = 50;
-            const maxX = gameAreaRect.width - letterSize - 10;
-            const x = Math.random() * maxX + 5;
-
-            const letterEl = document.createElement('div');
-            letterEl.className = 'falling-letter';
-            letterEl.textContent = letter;
-            letterEl.style.left = `${x}px`;
-            letterEl.style.top = '-50px';
-
-            // Drag events
-            letterEl.addEventListener('mousedown', (e) => startDragFalling(e, letterEl));
-            letterEl.addEventListener('touchstart', (e) => startDragFalling(e, letterEl));
-
-            gameArea.appendChild(letterEl);
-
-            const fallingLetter = {
-                element: letterEl,
-                letter: letter,
-                x: x,
-                y: -50,
-                speed: 1 + (gameState.level * 0.2),
-                isDragging: false
-            };
-
-            gameState.fallingLetters.push(fallingLetter);
-        }
-
-        function startDragFalling(e, element) {
-            e.preventDefault();
-
-            const letterObj = gameState.fallingLetters.find(l => l.element === element);
-            if (!letterObj) return;
-
-            letterObj.isDragging = true;
-            element.classList.add('dragging');
-            gameState.draggedLetter = letterObj;
-            gameState.draggedFromTray = false;
-        }
-
-        function startDragTray(e, index) {
-            e.preventDefault();
-
-            const letter = gameState.collectedLetters[index];
-            if (!letter) return;
-
-            const trayLetters = letterTray.querySelectorAll('.tray-letter');
-            if (trayLetters[index]) {
-                trayLetters[index].classList.add('dragging');
-            }
-
-            gameState.draggedLetter = { letter: letter, trayIndex: index };
-            gameState.draggedFromTray = true;
-            gameState.draggedTrayIndex = index;
-        }
-
-        function handleDrag(e) {
-            if (!gameState.draggedLetter) return;
-
-            e.preventDefault();
-
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-            if (!gameState.draggedFromTray && gameState.draggedLetter.element) {
-                const gameAreaRect = gameArea.getBoundingClientRect();
-                const x = clientX - gameAreaRect.left - 25;
-                const y = clientY - gameAreaRect.top - 25;
-
-                gameState.draggedLetter.x = Math.max(0, Math.min(x, gameAreaRect.width - 50));
-                gameState.draggedLetter.y = Math.max(0, Math.min(y, gameAreaRect.height - 50));
-                gameState.draggedLetter.element.style.left = `${gameState.draggedLetter.x}px`;
-                gameState.draggedLetter.element.style.top = `${gameState.draggedLetter.y}px`;
-            }
-
-            // Highlight slots on hover
-            const slots = document.querySelectorAll('.word-slot');
-            slots.forEach(slot => {
-                const rect = slot.getBoundingClientRect();
-                if (clientX >= rect.left && clientX <= rect.right &&
-                    clientY >= rect.top && clientY <= rect.bottom) {
-                    slot.classList.add('drag-over');
+            // Fill row with mix of answer letters and random letters
+            for (let i = 0; i < CONFIG.gridCols; i++) {
+                if (Math.random() < 0.5 && answerLetters.length > 0) {
+                    // Pick from answer letters
+                    const idx = Math.floor(Math.random() * answerLetters.length);
+                    row.push(answerLetters[idx]);
                 } else {
-                    slot.classList.remove('drag-over');
+                    // Random letter with vowel bias
+                    const vowels = 'AEIOU';
+                    const consonants = 'BCDFGHJKLMNPQRSTVWXYZ';
+                    if (Math.random() < 0.35) {
+                        row.push(vowels[Math.floor(Math.random() * vowels.length)]);
+                    } else {
+                        row.push(consonants[Math.floor(Math.random() * consonants.length)]);
+                    }
                 }
-            });
+            }
+
+            return row;
         }
 
-        function handleDragEnd(e) {
-            if (!gameState.draggedLetter) return;
-
-            const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
-            const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
-
-            // Check if dropped on a slot
-            const slots = document.querySelectorAll('.word-slot');
-            let droppedOnSlot = false;
-
-            slots.forEach((slot, index) => {
-                slot.classList.remove('drag-over');
-                const rect = slot.getBoundingClientRect();
-                if (clientX >= rect.left && clientX <= rect.right &&
-                    clientY >= rect.top && clientY <= rect.bottom) {
-                    handleSlotDrop(e, index);
-                    droppedOnSlot = true;
-                }
-            });
-
-            // If dragging a falling letter and dropped in letter tray area
-            if (!gameState.draggedFromTray && gameState.draggedLetter.element) {
-                const trayRect = letterTray.getBoundingClientRect();
-                if (clientX >= trayRect.left && clientX <= trayRect.right &&
-                    clientY >= trayRect.top && clientY <= trayRect.bottom) {
-                    collectLetter(gameState.draggedLetter);
-                    droppedOnSlot = true;
-                }
-
-                gameState.draggedLetter.isDragging = false;
-                gameState.draggedLetter.element.classList.remove('dragging');
-            }
-
-            // Clean up tray letter dragging
-            if (gameState.draggedFromTray) {
-                const trayLetters = letterTray.querySelectorAll('.tray-letter');
-                if (trayLetters[gameState.draggedTrayIndex]) {
-                    trayLetters[gameState.draggedTrayIndex].classList.remove('dragging');
-                }
-            }
-
-            gameState.draggedLetter = null;
-            gameState.draggedFromTray = false;
-            gameState.draggedTrayIndex = -1;
+        function spawnFallingRow() {
+            gameState.fallingRow = generateRandomRow();
+            gameState.fallingRowIndex = 0;
+            renderGrid();
         }
 
-        function handleGameAreaDrop(e) {
-            // Collect letter if dragged to bottom of game area
-            if (gameState.draggedLetter && !gameState.draggedFromTray) {
-                const gameAreaRect = gameArea.getBoundingClientRect();
-                const clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
-
-                if (clientY > gameAreaRect.bottom - 100) {
-                    collectLetter(gameState.draggedLetter);
-                }
+        function startFalling() {
+            if (gameState.fallInterval) {
+                clearInterval(gameState.fallInterval);
             }
+
+            const speed = Math.max(CONFIG.fallSpeed - (gameState.level * 150), 800);
+            gameState.fallInterval = setInterval(dropRow, speed);
         }
 
-        function handleSlotDrop(e, slotIndex) {
-            e.preventDefault();
+        function dropRow() {
+            if (!gameState.isPlaying || gameState.phase !== 'falling') return;
 
-            const slot = gameState.wordSlots[slotIndex];
-            if (!slot || !gameState.draggedLetter) return;
+            const nextRow = gameState.fallingRowIndex + 1;
 
-            // If slot already has a letter, return it to tray
-            if (slot.letter) {
-                gameState.collectedLetters.push(slot.letter);
-            }
+            // Check if can drop further
+            if (nextRow >= CONFIG.gridRows || gameState.grid[nextRow].some(cell => cell !== null)) {
+                // Lock the row in place
+                gameState.grid[gameState.fallingRowIndex] = [...gameState.fallingRow];
+                gameState.stackedRows++;
+                updateUI();
 
-            let letter;
-            if (gameState.draggedFromTray) {
-                letter = gameState.draggedLetter.letter;
-                gameState.collectedLetters.splice(gameState.draggedTrayIndex, 1);
+                // Check if grid is full
+                if (gameState.stackedRows >= CONFIG.gridRows) {
+                    // Grid is full - enter word finding phase
+                    enterWordPhase();
+                } else {
+                    // Spawn new falling row
+                    spawnFallingRow();
+                }
             } else {
-                letter = gameState.draggedLetter.letter;
-                // Remove from falling letters
-                const index = gameState.fallingLetters.indexOf(gameState.draggedLetter);
-                if (index > -1) {
-                    gameState.draggedLetter.element.remove();
-                    gameState.fallingLetters.splice(index, 1);
+                // Move row down
+                gameState.fallingRowIndex = nextRow;
+                renderGrid();
+            }
+        }
+
+        function shuffleFallingRow(e) {
+            e.preventDefault();
+            if (!gameState.fallingRow || gameState.phase !== 'falling') return;
+
+            // Shuffle the letters
+            for (let i = gameState.fallingRow.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [gameState.fallingRow[i], gameState.fallingRow[j]] =
+                [gameState.fallingRow[j], gameState.fallingRow[i]];
+            }
+
+            // Add shuffle animation
+            const rowEl = gridContainer.children[gameState.fallingRowIndex];
+            if (rowEl) {
+                rowEl.classList.add('shuffling');
+                setTimeout(() => rowEl.classList.remove('shuffling'), 200);
+            }
+
+            renderGrid();
+        }
+
+        function enterWordPhase() {
+            clearInterval(gameState.fallInterval);
+            gameState.phase = 'words';
+            gameState.fallingRow = null;
+            gameState.fallingRowIndex = -1;
+
+            tapHint.style.display = 'none';
+
+            // Find all valid words in the grid
+            findAllWords();
+
+            // Show word phase UI
+            wordPhase.classList.add('active');
+            renderFoundWords();
+            renderGrid();
+        }
+
+        function findAllWords() {
+            gameState.foundWords = [];
+            const found = new Set();
+
+            // Search horizontally
+            for (let row = 0; row < CONFIG.gridRows; row++) {
+                const rowLetters = gameState.grid[row].join('');
+                findWordsInString(rowLetters, found);
+            }
+
+            // Search vertically
+            for (let col = 0; col < CONFIG.gridCols; col++) {
+                let colLetters = '';
+                for (let row = 0; row < CONFIG.gridRows; row++) {
+                    colLetters += gameState.grid[row][col] || '';
+                }
+                findWordsInString(colLetters, found);
+            }
+
+            // Search diagonally (top-left to bottom-right)
+            for (let startRow = 0; startRow < CONFIG.gridRows; startRow++) {
+                let diag = '';
+                let row = startRow, col = 0;
+                while (row < CONFIG.gridRows && col < CONFIG.gridCols) {
+                    diag += gameState.grid[row][col] || '';
+                    row++;
+                    col++;
+                }
+                findWordsInString(diag, found);
+            }
+            for (let startCol = 1; startCol < CONFIG.gridCols; startCol++) {
+                let diag = '';
+                let row = 0, col = startCol;
+                while (row < CONFIG.gridRows && col < CONFIG.gridCols) {
+                    diag += gameState.grid[row][col] || '';
+                    row++;
+                    col++;
+                }
+                findWordsInString(diag, found);
+            }
+
+            // Search diagonally (top-right to bottom-left)
+            for (let startRow = 0; startRow < CONFIG.gridRows; startRow++) {
+                let diag = '';
+                let row = startRow, col = CONFIG.gridCols - 1;
+                while (row < CONFIG.gridRows && col >= 0) {
+                    diag += gameState.grid[row][col] || '';
+                    row++;
+                    col--;
+                }
+                findWordsInString(diag, found);
+            }
+            for (let startCol = CONFIG.gridCols - 2; startCol >= 0; startCol--) {
+                let diag = '';
+                let row = 0, col = startCol;
+                while (row < CONFIG.gridRows && col >= 0) {
+                    diag += gameState.grid[row][col] || '';
+                    row++;
+                    col--;
+                }
+                findWordsInString(diag, found);
+            }
+
+            // Also find words using any combination of letters in the grid
+            const allLetters = gameState.grid.flat().filter(l => l).join('');
+            findWordsFromLetters(allLetters, found);
+
+            gameState.foundWords = Array.from(found).sort((a, b) => b.length - a.length);
+        }
+
+        function findWordsInString(str, foundSet) {
+            const s = str.toLowerCase();
+            // Check all substrings
+            for (let i = 0; i < s.length; i++) {
+                for (let len = CONFIG.minWordLength; len <= s.length - i; len++) {
+                    const word = s.substring(i, i + len);
+                    if (VALID_WORDS.has(word)) {
+                        foundSet.add(word);
+                    }
                 }
             }
+            // Also check reversed
+            const rev = s.split('').reverse().join('');
+            for (let i = 0; i < rev.length; i++) {
+                for (let len = CONFIG.minWordLength; len <= rev.length - i; len++) {
+                    const word = rev.substring(i, i + len);
+                    if (VALID_WORDS.has(word)) {
+                        foundSet.add(word);
+                    }
+                }
+            }
+        }
 
-            // Place letter in slot
-            slot.letter = letter;
-            slot.element.textContent = letter;
-            slot.element.classList.add('filled');
+        function findWordsFromLetters(letters, foundSet) {
+            const letterCount = {};
+            for (const l of letters.toLowerCase()) {
+                letterCount[l] = (letterCount[l] || 0) + 1;
+            }
 
-            updateTray();
+            // Check each valid word to see if it can be formed
+            for (const word of VALID_WORDS) {
+                if (word.length >= CONFIG.minWordLength && canFormWord(word, { ...letterCount })) {
+                    foundSet.add(word);
+                }
+            }
+        }
+
+        function canFormWord(word, letterCount) {
+            const needed = {};
+            for (const l of word) {
+                needed[l] = (needed[l] || 0) + 1;
+            }
+
+            for (const [letter, count] of Object.entries(needed)) {
+                if (!letterCount[letter] || letterCount[letter] < count) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function renderFoundWords() {
+            foundWordsContainer.innerHTML = '';
+
+            gameState.foundWords.forEach(word => {
+                const chip = document.createElement('div');
+                chip.className = 'word-chip';
+                chip.textContent = word;
+
+                if (gameState.selectedWords.includes(word)) {
+                    chip.classList.add('used');
+                }
+
+                chip.addEventListener('click', () => selectWord(word));
+                foundWordsContainer.appendChild(chip);
+            });
+
+            renderAnswerWords();
+        }
+
+        function selectWord(word) {
+            if (gameState.selectedWords.includes(word)) return;
+
+            gameState.selectedWords.push(word);
+            renderFoundWords();
             checkSubmitEnabled();
-
-            // Reset drag state
-            gameState.draggedLetter = null;
-            gameState.draggedFromTray = false;
         }
 
-        function collectLetter(letterObj) {
-            if (gameState.collectedLetters.length >= 12) {
-                // Tray full, remove oldest
-                gameState.collectedLetters.shift();
-            }
-
-            gameState.collectedLetters.push(letterObj.letter);
-
-            // Show floating +1 animation
-            showFloatScore('+1', letterObj.element.getBoundingClientRect());
-
-            // Remove from falling letters
-            const index = gameState.fallingLetters.indexOf(letterObj);
-            if (index > -1) {
-                letterObj.element.remove();
-                gameState.fallingLetters.splice(index, 1);
-            }
-
-            updateTray();
+        function removeWord(index) {
+            gameState.selectedWords.splice(index, 1);
+            renderFoundWords();
+            checkSubmitEnabled();
         }
 
-        function updateTray() {
-            letterTray.innerHTML = '';
+        function renderAnswerWords() {
+            answerWordsContainer.innerHTML = '';
 
-            gameState.collectedLetters.forEach((letter, index) => {
-                const letterEl = document.createElement('div');
-                letterEl.className = 'tray-letter';
-                letterEl.textContent = letter;
-                letterEl.addEventListener('mousedown', (e) => startDragTray(e, index));
-                letterEl.addEventListener('touchstart', (e) => startDragTray(e, index));
-                letterTray.appendChild(letterEl);
+            gameState.selectedWords.forEach((word, index) => {
+                const wordEl = document.createElement('div');
+                wordEl.className = 'answer-word';
+                wordEl.textContent = word;
+                wordEl.addEventListener('click', () => removeWord(index));
+                answerWordsContainer.appendChild(wordEl);
             });
         }
 
         function checkSubmitEnabled() {
-            const allFilled = gameState.wordSlots.every(slot => slot.letter !== null);
-            submitBtn.disabled = !allFilled;
+            submitBtn.disabled = gameState.selectedWords.length < gameState.currentClue.minWords;
         }
 
-        function submitWord() {
-            const word = gameState.wordSlots.map(slot => slot.letter).join('').toLowerCase();
-            const answer = gameState.currentClue.answer.toLowerCase();
-
-            if (word === answer) {
-                // Correct answer - level complete!
-                const bonus = 500 + (gameState.level * 100);
-                gameState.score += bonus;
-                updateUI();
-
-                showLevelComplete(word.toUpperCase(), bonus);
-            } else if (VALID_WORDS.has(word)) {
-                // Valid word but not the answer
-                const points = calculateWordPoints(word);
-                gameState.score += points;
-                updateUI();
-
-                showWordBonus(word.toUpperCase(), points);
-
-                // Clear slots and return letters
-                clearWord();
-            } else {
-                // Invalid word
-                gameState.lives--;
-                updateUI();
-
-                if (gameState.lives <= 0) {
-                    gameOver();
-                } else {
-                    // Shake animation
-                    wordSlotsContainer.style.animation = 'shake 0.5s';
-                    setTimeout(() => {
-                        wordSlotsContainer.style.animation = '';
-                    }, 500);
-
-                    clearWord();
-                }
-            }
-        }
-
-        function calculateWordPoints(word) {
-            let points = word.length * 10;
-
-            // Bonus for longer words
-            if (word.length >= 6) points += 25;
-            if (word.length >= 8) points += 50;
-
-            // Bonus for difficult letters
-            const difficultLetters = 'JKQXZ';
-            for (const char of word.toUpperCase()) {
-                if (difficultLetters.includes(char)) {
-                    points += 15;
-                }
-            }
-
-            return points;
-        }
-
-        function clearWord() {
-            gameState.wordSlots.forEach(slot => {
-                if (slot.letter) {
-                    gameState.collectedLetters.push(slot.letter);
-                    slot.letter = null;
-                    slot.element.textContent = '';
-                    slot.element.classList.remove('filled');
-                }
-            });
-
-            updateTray();
+        function clearAnswer() {
+            gameState.selectedWords = [];
+            renderFoundWords();
             checkSubmitEnabled();
         }
 
-        function gameLoop() {
-            if (!gameState.isPlaying) return;
+        function submitAnswer() {
+            const answer = gameState.selectedWords;
+            const expected = gameState.currentClue.answer;
 
-            const gameAreaRect = gameArea.getBoundingClientRect();
-
-            // Update falling letters
-            gameState.fallingLetters.forEach((letterObj, index) => {
-                if (letterObj.isDragging) return;
-
-                letterObj.y += letterObj.speed;
-                letterObj.element.style.top = `${letterObj.y}px`;
-
-                // Check if letter fell off screen
-                if (letterObj.y > gameAreaRect.height) {
-                    letterObj.element.remove();
-                    gameState.fallingLetters.splice(index, 1);
+            // Check if all expected words are present (order doesn't matter for partial credit)
+            let matchCount = 0;
+            for (const word of expected) {
+                if (answer.includes(word.toLowerCase())) {
+                    matchCount++;
                 }
-            });
+            }
+
+            const matchRatio = matchCount / expected.length;
+
+            if (matchRatio >= 0.5) {
+                // Good enough - level complete!
+                const bonus = Math.floor(500 * matchRatio) + (gameState.level * 50);
+                gameState.score += bonus;
+                updateUI();
+
+                showLevelComplete(answer.join(' ').toUpperCase(), bonus);
+            } else {
+                // Not quite - show feedback but let them try again
+                gameState.selectedWords = [];
+                renderFoundWords();
+
+                // Visual feedback
+                answerWordsContainer.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    answerWordsContainer.style.animation = '';
+                }, 500);
+            }
         }
 
-        function showFloatScore(text, rect) {
-            const float = document.createElement('div');
-            float.className = 'float-score';
-            float.textContent = text;
-            float.style.left = `${rect.left + rect.width / 2}px`;
-            float.style.top = `${rect.top}px`;
-            document.body.appendChild(float);
-
-            setTimeout(() => float.remove(), 1000);
-        }
-
-        function showWordBonus(word, points) {
-            const bonus = document.createElement('div');
-            bonus.className = 'word-bonus';
-            bonus.innerHTML = `${word}<br>+${points}`;
-            document.body.appendChild(bonus);
-
-            setTimeout(() => bonus.remove(), 1500);
-        }
-
-        function showLevelComplete(word, bonus) {
+        function showLevelComplete(answer, bonus) {
             gameState.isPlaying = false;
-            clearInterval(gameState.gameInterval);
-            clearInterval(gameState.letterSpawnInterval);
 
-            document.getElementById('word-found').textContent = word;
+            document.getElementById('answer-reveal').textContent = answer;
             document.getElementById('level-score').textContent = `+${bonus} points`;
             levelCompleteScreen.classList.remove('hidden');
         }
@@ -1517,8 +1254,7 @@
 
         function gameOver() {
             gameState.isPlaying = false;
-            clearInterval(gameState.gameInterval);
-            clearInterval(gameState.letterSpawnInterval);
+            clearInterval(gameState.fallInterval);
 
             document.getElementById('final-score').textContent = gameState.score;
             document.getElementById('levels-completed').textContent = `Levels completed: ${gameState.level - 1}`;
@@ -1533,7 +1269,7 @@
         function updateUI() {
             levelDisplay.textContent = gameState.level;
             scoreDisplay.textContent = gameState.score;
-            livesDisplay.textContent = gameState.lives;
+            rowsLeftDisplay.textContent = CONFIG.gridRows - gameState.stackedRows;
         }
 
         // Add shake animation
